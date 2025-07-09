@@ -6,6 +6,7 @@ export interface ApiResponse<T> {
 }
 
 export interface Imovel {
+  temElevador: string
   codigoImovel: string
   codigoReferenciaImovel: string
   dataCadastroImovel: string

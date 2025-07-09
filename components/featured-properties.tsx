@@ -4,11 +4,10 @@ import { Button } from "@/components/ui/button"
 import { MapPin, Bed, Bath, Square, Heart } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { listarImoveis, formatarPreco, obterTipoImovelNome, criarFiltroImovel } from "@/lib/api"
-import type { Imovel } from "@/types/api" // Importa o tipo Imovel
+import { listarImoveis, formatarPreco, obterTipoImovelNome, criarFiltroImovel, obterImovel } from "@/lib/api"
+import type { Imovel } from "@/types/api"
 
 export async function FeaturedProperties() {
-  // CORREÇÃO: Definindo o tipo explícito para a variável 'imoveis'
   let imoveis: Imovel[] = []
 
   try {
@@ -17,13 +16,18 @@ export async function FeaturedProperties() {
       destaqueNoSite: true,
     })
 
-    imoveis = await listarImoveis(filtro)
+    const imoveisDestaque = await listarImoveis(filtro)
+
+    // Busca os detalhes de cada imóvel para obter o tipo de operação
+    const imoveisComDetalhes = await Promise.all(
+      imoveisDestaque.map(imovel => obterImovel(imovel.codigoImovel))
+    );
+    imoveis = imoveisComDetalhes;
+
   } catch (error) {
     console.error("Erro ao carregar imóveis em destaque:", error)
-    // Continua com array vazio se houver erro
   }
 
-  // O botão com o estilo invertido
   const viewAllButton = (
     <Link href="/busca">
       <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors duration-300">

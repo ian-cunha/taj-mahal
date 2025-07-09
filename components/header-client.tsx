@@ -42,7 +42,6 @@ export function HeaderClient({ companyName, logoUrl }: HeaderClientProps) {
                 <Home className="w-6 h-6 text-primary-foreground" />
               </div>
             )}
-            <span className="text-xl font-bold text-gray-900">{companyName}</span>
           </Link>
 
           {/* Desktop Navigation */}

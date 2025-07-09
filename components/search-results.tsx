@@ -18,9 +18,7 @@ interface SearchResultsProps {
   totalPages: number;
 }
 
-// Este não é mais um componente async. Ele apenas recebe os dados.
 export function SearchResults({ imoveis, total, error, currentPage, totalPages }: SearchResultsProps) {
-  // Se ocorreu um erro no servidor ao buscar os dados
   if (error) {
     return (
       <div className="space-y-6">
@@ -43,7 +41,6 @@ export function SearchResults({ imoveis, total, error, currentPage, totalPages }
     );
   }
 
-  // Se a busca não retornou imóveis
   if (imoveis.length === 0) {
     return (
       <div className="text-center py-12">
@@ -56,7 +53,6 @@ export function SearchResults({ imoveis, total, error, currentPage, totalPages }
     );
   }
 
-  // Renderiza os resultados da busca
   return (
     <div>
       <div className="mb-6 flex justify-between items-center">

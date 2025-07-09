@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { SearchResults } from "@/components/search-results";
 import { SearchFilters } from "@/components/search-filters";
 import { LoadingSpinner } from "@/components/loading-spinner";
-import { listarImoveis, criarFiltroImovel, obterTotalImoveis } from "@/lib/api";
+import { listarImoveis, obterImovel, criarFiltroImovel, obterTotalImoveis } from "@/lib/api";
 import type { Imovel } from "@/types/api";
 
 interface SearchPageProps {
@@ -26,7 +26,6 @@ async function fetchImoveis(searchParams: SearchPageProps['searchParams']) {
   const currentPage = Number(searchParams.page || "1");
   const itemsPerPage = 12;
 
-  // Usamos 'any' para permitir o nome de filtro corrigido
   const filtro: any = criarFiltroImovel({
     paginado: true,
     startpag: (currentPage - 1) * itemsPerPage,
@@ -34,24 +33,27 @@ async function fetchImoveis(searchParams: SearchPageProps['searchParams']) {
   });
 
   // Aplica os filtros da URL
+  if (searchParams.statusImovelStr) filtro.statusImovelStr = searchParams.statusImovelStr;
   if (searchParams.tipoImovel && searchParams.tipoImovel !== "all") filtro.tipoImovel = searchParams.tipoImovel;
   if (searchParams.precoMinimo) filtro.precoMinimo = searchParams.precoMinimo;
   if (searchParams.precoMaximo) filtro.precoMaximo = searchParams.precoMaximo;
   if (searchParams.idEstado && searchParams.idEstado !== "all") filtro.idEstado = Number(searchParams.idEstado);
   if (searchParams.idCidade && searchParams.idCidade !== "all") filtro.idCidade = Number(searchParams.idCidade);
   if (searchParams.idBairros && searchParams.idBairros !== "all") filtro.idBairros = [Number(searchParams.idBairros)];
-
-  // CORREÇÃO: Usando 'nquartosMinimo' que é o nome correto esperado pela API externa
-  if (searchParams.quartosMinimo && searchParams.quartosMinimo !== "all") {
-    filtro.nquartosMinimo = searchParams.quartosMinimo;
-  }
+  if (searchParams.quartosMinimo && searchParams.quartosMinimo !== "all") filtro.nquartosMinimo = searchParams.quartosMinimo;
 
   try {
     const [imoveis, total] = await Promise.all([
       listarImoveis(filtro),
       obterTotalImoveis(filtro)
     ]);
-    return { imoveis, total, error: null, currentPage };
+
+    // Busca os detalhes de cada imóvel para obter o tipo de operação
+    const imoveisComDetalhes = await Promise.all(
+      imoveis.map(imovel => obterImovel(imovel.codigoImovel))
+    );
+
+    return { imoveis: imoveisComDetalhes, total, error: null, currentPage };
   } catch (err) {
     console.error("Erro na busca de imóveis (Server):", err);
     const error = err instanceof Error ? err.message : "Erro desconhecido";

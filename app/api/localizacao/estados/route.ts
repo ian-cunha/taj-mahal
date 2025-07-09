@@ -9,11 +9,16 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const tipoImovel = searchParams.get('tipoImovel');
+    const statusImovelStr = searchParams.get('statusImovelStr');
+
 
     // O filtro é aplicado apenas se o tipo de imóvel for especificado
     const filtro = criarFiltroImovel({ quantidadeImoveis: 9999, paginado: false });
     if (tipoImovel && tipoImovel !== 'all') {
       filtro.tipoImovel = tipoImovel;
+    }
+    if (statusImovelStr) {
+      filtro.statusImovelStr = statusImovelStr;
     }
 
     const [estados, imoveis] = await Promise.all([

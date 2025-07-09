@@ -19,9 +19,9 @@ export async function EmpreendimentosResults() {
     console.error("Erro ao carregar empreendimentos:", error)
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600 mb-4">Erro ao carregar os empreendimentos. Tente novamente.</p>
-        <a href="/empreendimentos" className="inline-flex">
-          <Button variant="outline">Tentar Novamente</Button>
+        <p className="text-gray-600 mb-4">Sem empreendimentos disponíveis.</p>
+        <a href="/" className="inline-flex">
+          <Button variant="outline">Voltar ao Início</Button>
         </a>
       </div>
     )

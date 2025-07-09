@@ -31,6 +31,7 @@ export function SearchFilters() {
   })
 
   const [selectedFilters, setSelectedFilters] = useState({
+    statusImovelStr: searchParams.get('statusImovelStr') || 'all',
     tipoImovel: searchParams.get('tipoImovel') || 'all',
     idEstado: searchParams.get('idEstado') || 'all',
     idCidade: searchParams.get('idCidade') || 'all',
@@ -51,10 +52,11 @@ export function SearchFilters() {
   }, [])
 
   useEffect(() => {
-    const { tipoImovel, idEstado, idCidade } = selectedFilters;
+    const { statusImovelStr, tipoImovel, idEstado, idCidade } = selectedFilters;
 
     const buildParams = (excludeKey: string = '') => {
       const params = new URLSearchParams();
+      if (statusImovelStr && statusImovelStr !== 'all') params.set('statusImovelStr', statusImovelStr);
       if (tipoImovel !== 'all' && excludeKey !== 'tipoImovel') params.set('tipoImovel', tipoImovel);
       if (idEstado !== 'all' && excludeKey !== 'idEstado') params.set('idEstado', idEstado);
       if (idCidade !== 'all' && excludeKey !== 'idCidade') params.set('idCidade', idCidade);

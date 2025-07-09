@@ -1,4 +1,4 @@
-// app/api/localizacao/cidades/[estado]/route.ts - VERSÃO CORRIGIDA
+// app/api/localizacao/cidades/[estado]/route.ts
 
 import { obterCidades, criarFiltroImovel, listarImoveis } from "@/lib/api";
 import { NextResponse } from "next/server";
@@ -9,6 +9,7 @@ export async function GET(request: NextRequest, { params }: { params: { estado: 
   try {
     const { searchParams } = new URL(request.url);
     const tipoImovel = searchParams.get('tipoImovel');
+    const statusImovelStr = searchParams.get('statusImovelStr');
     const codigoEstado = Number.parseInt(params.estado);
 
     if (isNaN(codigoEstado)) {
@@ -25,6 +26,10 @@ export async function GET(request: NextRequest, { params }: { params: { estado: 
     // Adiciona o filtro de tipo de imóvel, se ele foi fornecido
     if (tipoImovel && tipoImovel !== 'all') {
       filtro.tipoImovel = tipoImovel;
+    }
+
+    if (statusImovelStr) {
+      filtro.statusImovelStr = statusImovelStr;
     }
 
     // Busca as cidades e os imóveis filtrados em paralelo

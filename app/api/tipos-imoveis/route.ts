@@ -20,12 +20,15 @@ export async function GET(request: NextRequest) {
         // Cria o filtro base
         const filtro = criarFiltroImovel({ quantidadeImoveis: 9999, paginado: false });
 
-        // Adiciona filtros de localização se eles existirem na URL
+        // Adiciona filtros de localização e operação se eles existirem na URL
         const idEstado = searchParams.get('idEstado');
         const idCidade = searchParams.get('idCidade');
+        const statusImovelStr = searchParams.get('statusImovelStr');
 
         if (idEstado && idEstado !== 'all') filtro.idEstado = Number(idEstado);
         if (idCidade && idCidade !== 'all') filtro.idCidade = Number(idCidade);
+        if (statusImovelStr) filtro.statusImovelStr = statusImovelStr;
+
 
         const imoveis = await listarImoveis(filtro);
 

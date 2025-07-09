@@ -61,10 +61,11 @@ export function HeroClient({ companyName, videoUrl, imageUrl }: HeroClientProps)
   }, [])
 
   useEffect(() => {
-    const { tipoImovel, idEstado } = searchData;
+    const { tipoOperacao, tipoImovel, idEstado } = searchData;
 
     const buildParams = (excludeKey: string = '') => {
       const params = new URLSearchParams();
+      if (tipoOperacao) params.set('statusImovelStr', tipoOperacao)
       if (tipoImovel !== 'all' && excludeKey !== 'tipoImovel') params.set('tipoImovel', tipoImovel);
       if (idEstado !== 'all' && excludeKey !== 'idEstado') params.set('idEstado', idEstado);
       return params.toString();
@@ -79,7 +80,7 @@ export function HeroClient({ companyName, videoUrl, imageUrl }: HeroClientProps)
     } else {
       setOptions(o => ({ ...o, cidades: [] }));
     }
-  }, [searchData.tipoImovel, searchData.idEstado, fetchData]);
+  }, [searchData.tipoOperacao, searchData.tipoImovel, searchData.idEstado, fetchData]);
 
 
   const handleSearch = () => {
