@@ -1,36 +1,32 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Search, Home, DollarSign, FileText, Calculator, Users } from "lucide-react"
+import Link from 'next/link'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Briefcase, Key, Landmark, Upload } from 'lucide-react'
 
+// Array com as novas seções de serviços/ações
 const services = [
   {
-    icon: Search,
-    title: "Busca Personalizada",
-    description: "Encontramos o imóvel ideal baseado no seu perfil e necessidades específicas.",
+    icon: Briefcase,
+    title: 'Trabalhe Conosco',
+    description: 'Faça parte de uma equipe de sucesso e construa sua carreira no mercado imobiliário.',
+    href: '/trabalhe-conosco',
   },
   {
-    icon: Home,
-    title: "Venda de Imóveis",
-    description: "Vendemos seu imóvel com estratégias de marketing e precificação adequada.",
+    icon: Key,
+    title: 'Solicite seu Imóvel',
+    description: 'Não encontrou o que procurava? Descreva o imóvel dos seus sonhos e nós o encontraremos para você.',
+    href: '/solicite-seu-imovel', // Crie esta página se ainda não existir
   },
   {
-    icon: DollarSign,
-    title: "Financiamento",
-    description: "Ajudamos você a conseguir o melhor financiamento para realizar seu sonho.",
+    icon: Landmark,
+    title: 'Financie seu Imóvel',
+    description: 'Oferecemos assessoria completa para você conseguir o melhor financiamento imobiliário.',
+    href: '/financie-seu-imovel', // Crie esta página se ainda não existir
   },
   {
-    icon: FileText,
-    title: "Documentação",
-    description: "Cuidamos de toda a documentação necessária para sua transação imobiliária.",
-  },
-  {
-    icon: Calculator,
-    title: "Avaliação",
-    description: "Realizamos avaliações precisas para determinar o valor real do seu imóvel.",
-  },
-  {
-    icon: Users,
-    title: "Consultoria",
-    description: "Oferecemos consultoria especializada em investimentos imobiliários.",
+    icon: Upload,
+    title: 'Cadastre seu Imóvel',
+    description: 'É proprietário? Anuncie seu imóvel conosco e alcance milhares de compradores em potencial.',
+    href: '/cadastre-seu-imovel', // Crie esta página se ainda não existir
   },
 ]
 
@@ -39,25 +35,27 @@ export function Services() {
     <section className="py-16 bg-gray-50">
       <div className="container">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Nossos Serviços</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Soluções para Você</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Oferecemos uma gama completa de serviços imobiliários para atender todas as suas necessidades
+            Tudo o que você precisa para comprar, vender ou financiar seu imóvel em um só lugar.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => (
-            <Card key={index} className="text-center hover:shadow-lg transition-shadow duration-300">
-              <CardHeader>
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <service.icon className="w-8 h-8 text-blue-600" />
-                </div>
-                <CardTitle className="text-xl">{service.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-gray-600">{service.description}</CardDescription>
-              </CardContent>
-            </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {services.map((service) => (
+            <Link key={service.title} href={service.href} className="block group">
+              <Card className="h-full text-center hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <CardHeader>
+                  <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary transition-colors duration-300">
+                    <service.icon className="w-8 h-8 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
+                  </div>
+                  <CardTitle>{service.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">{service.description}</p>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       </div>

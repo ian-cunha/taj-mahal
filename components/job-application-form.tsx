@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -40,7 +39,6 @@ export function JobApplicationForm() {
             required
           />
         </div>
-
         <div>
           <Label htmlFor="email">E-mail</Label>
           <Input
@@ -53,7 +51,6 @@ export function JobApplicationForm() {
           />
         </div>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="telefone">Telefone</Label>
@@ -65,7 +62,6 @@ export function JobApplicationForm() {
             required
           />
         </div>
-
         <div>
           <Label htmlFor="cargo">Cargo de Interesse</Label>
           <Select value={formData.cargo} onValueChange={(value) => setFormData({ ...formData, cargo: value })}>
@@ -81,7 +77,6 @@ export function JobApplicationForm() {
           </Select>
         </div>
       </div>
-
       <div>
         <Label htmlFor="creci">CRECI (se aplicável)</Label>
         <Input
@@ -91,7 +86,6 @@ export function JobApplicationForm() {
           onChange={(e) => setFormData({ ...formData, creci: e.target.value })}
         />
       </div>
-
       <div>
         <Label htmlFor="experiencia">Experiência Profissional</Label>
         <Textarea
@@ -103,7 +97,6 @@ export function JobApplicationForm() {
           required
         />
       </div>
-
       <div>
         <Label htmlFor="motivacao">Por que quer trabalhar conosco?</Label>
         <Textarea
@@ -115,7 +108,6 @@ export function JobApplicationForm() {
           required
         />
       </div>
-
       <div>
         <Label>Currículo</Label>
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
@@ -127,9 +119,9 @@ export function JobApplicationForm() {
           </Button>
         </div>
       </div>
-
       <div className="text-center">
-        <Button type="submit" size="lg" className="btn-primary">
+        {/* CORREÇÃO: Removida a classe 'btn-primary' */}
+        <Button type="submit" size="lg">
           <Send className="w-4 h-4 mr-2" />
           Enviar Candidatura
         </Button>

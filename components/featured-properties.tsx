@@ -5,9 +5,11 @@ import { MapPin, Bed, Bath, Square, Heart } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { listarImoveis, formatarPreco, obterTipoImovelNome, criarFiltroImovel } from "@/lib/api"
+import type { Imovel } from "@/types/api" // Importa o tipo Imovel
 
 export async function FeaturedProperties() {
-  let imoveis = []
+  // CORREÇÃO: Definindo o tipo explícito para a variável 'imoveis'
+  let imoveis: Imovel[] = []
 
   try {
     const filtro = criarFiltroImovel({
@@ -21,6 +23,15 @@ export async function FeaturedProperties() {
     // Continua com array vazio se houver erro
   }
 
+  // O botão com o estilo invertido
+  const viewAllButton = (
+    <Link href="/busca">
+      <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors duration-300">
+        Ver Todos os Imóveis
+      </Button>
+    </Link>
+  );
+
   if (imoveis.length === 0) {
     return (
       <section className="py-16 bg-white">
@@ -33,11 +44,7 @@ export async function FeaturedProperties() {
           </div>
           <div className="text-center">
             <p className="text-gray-600 mb-4">Nenhum imóvel em destaque encontrado no momento.</p>
-            <Link href="/busca">
-              <Button variant="outline" size="lg">
-                Ver Todos os Imóveis
-              </Button>
-            </Link>
+            {viewAllButton}
           </div>
         </div>
       </section>
@@ -81,7 +88,7 @@ export async function FeaturedProperties() {
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <CardTitle className="text-lg line-clamp-2">{imovel.nomeImovel}</CardTitle>
-                  <span className="text-xl font-bold text-blue-600">{formatarPreco(imovel.preco)}</span>
+                  <span className="text-xl font-bold text-primary">{formatarPreco(imovel.preco)}</span>
                 </div>
                 <CardDescription className="flex items-center">
                   <MapPin className="w-4 h-4 mr-1" />
@@ -115,11 +122,7 @@ export async function FeaturedProperties() {
         </div>
 
         <div className="text-center mt-12">
-          <Link href="/busca">
-            <Button variant="outline" size="lg">
-              Ver Todos os Imóveis
-            </Button>
-          </Link>
+          {viewAllButton}
         </div>
       </div>
     </section>

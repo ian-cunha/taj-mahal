@@ -1,16 +1,57 @@
-import { obterBairros } from "@/lib/api"
-import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
+// app/api/localizacao/bairros/[cidade]/route.ts
+
+import { obterBairros, criarFiltroImovel, listarImoveis } from "@/lib/api";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import type { Bairro, Imovel } from "@/types/api";
 
 export async function GET(request: NextRequest, { params }: { params: { cidade: string } }) {
   try {
-    const codigo = Number.parseInt(params.cidade)
-    const bairros = await obterBairros(codigo)
-    return NextResponse.json(bairros)
-  } catch (error) {
-    console.error("Proxy erro bairros:", error)
+    const { searchParams } = new URL(request.url);
+    const tipoImovel = searchParams.get('tipoImovel');
+    const codigoCidade = Number.parseInt(params.cidade);
 
-    // Retorna array vazio em caso de erro
-    return NextResponse.json([])
+    if (isNaN(codigoCidade)) {
+      return new NextResponse(JSON.stringify({ message: "ID da cidade inválido" }), { status: 400 });
+    }
+
+    const filtro = criarFiltroImovel({
+      quantidadeImoveis: 9999,
+      paginado: false,
+      idCidade: codigoCidade // Filtra pela cidade
+    });
+
+    if (tipoImovel && tipoImovel !== 'all') {
+      filtro.tipoImovel = tipoImovel;
+    }
+
+    const [bairros, imoveisDaCidade] = await Promise.all([
+      obterBairros(codigoCidade),
+      listarImoveis(filtro)
+    ]);
+
+    const contagemPorBairro: Record<number, number> = {};
+    imoveisDaCidade.forEach((imovel: Imovel) => {
+      const bairroDoImovel = bairros.find(b => b.bairro === imovel.nomeBairro);
+      if (bairroDoImovel) {
+        contagemPorBairro[bairroDoImovel.codigo] = (contagemPorBairro[bairroDoImovel.codigo] || 0) + 1;
+      }
+    });
+
+    const bairrosComContagem = bairros
+      .map(bairro => ({
+        ...bairro,
+        contagem: contagemPorBairro[bairro.codigo] || 0,
+      }))
+      .filter(bairro => bairro.contagem > 0);
+
+    return NextResponse.json(bairrosComContagem);
+
+  } catch (error) {
+    console.error("Proxy erro bairros com contagem:", error);
+    return new NextResponse(
+      JSON.stringify({ message: "Erro ao buscar bairros" }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 }

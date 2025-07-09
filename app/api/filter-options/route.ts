@@ -1,0 +1,60 @@
+// app/api/filter-options/route.ts
+
+import { criarFiltroImovel, listarImoveis } from "@/lib/api";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import type { Imovel } from "@/types/api";
+
+export async function GET(request: NextRequest) {
+    try {
+        const { searchParams } = new URL(request.url);
+
+        const filtro: any = criarFiltroImovel({ quantidadeImoveis: 9999, paginado: false });
+
+        // Adiciona filtros existentes para refinar a busca
+        if (searchParams.get('tipoImovel') && searchParams.get('tipoImovel') !== 'all') filtro.tipoImovel = searchParams.get('tipoImovel');
+        if (searchParams.get('idEstado') && searchParams.get('idEstado') !== 'all') filtro.idEstado = Number(searchParams.get('idEstado'));
+        if (searchParams.get('idCidade') && searchParams.get('idCidade') !== 'all') filtro.idCidade = Number(searchParams.get('idCidade'));
+        if (searchParams.get('idBairros') && searchParams.get('idBairros') !== 'all') filtro.idBairros = [Number(searchParams.get('idBairros'))];
+
+        const imoveis = await listarImoveis(filtro);
+
+        // Extrai opções dinâmicas dos imóveis encontrados
+        const quartosOpcoes = new Set<string>();
+        let precoMin = Infinity;
+        let precoMax = 0;
+
+        imoveis.forEach((imovel: Imovel) => {
+            // Adiciona o número de quartos às opções, se for um valor válido
+            if (imovel.nquartos && Number(imovel.nquartos) > 0) {
+                quartosOpcoes.add(imovel.nquartos);
+            }
+            // Atualiza a faixa de preço
+            if (imovel.preco > 0) {
+                if (imovel.preco < precoMin) precoMin = imovel.preco;
+                if (imovel.preco > precoMax) precoMax = imovel.preco;
+            }
+        });
+
+        // Se não encontrou preço, define como 0
+        if (precoMin === Infinity) precoMin = 0;
+
+        // Converte o Set de quartos para um array ordenado de números
+        const availableBedrooms = Array.from(quartosOpcoes).map(Number).sort((a, b) => a - b);
+
+        return NextResponse.json({
+            availableBedrooms,
+            priceRange: {
+                min: precoMin,
+                max: precoMax,
+            },
+        });
+
+    } catch (error) {
+        console.error("Proxy erro filter-options:", error);
+        return new NextResponse(
+            JSON.stringify({ message: "Erro ao buscar opções de filtro" }),
+            { status: 500 }
+        );
+    }
+}

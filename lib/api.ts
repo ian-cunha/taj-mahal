@@ -28,7 +28,7 @@ class ApiError extends Error {
 
 async function apiRequest<T>(url: string, retryWithHttp = true): Promise<T> {
   try {
-    console.log("🔄 API Request:", url)
+    console.log("🔄 API Request:", url);
 
     const response = await fetch(url, {
       headers: {
@@ -36,36 +36,40 @@ async function apiRequest<T>(url: string, retryWithHttp = true): Promise<T> {
       },
       redirect: "follow",
       next: { revalidate: 300 }, // Cache por 5 minutos
-    })
+    });
 
-    console.log("📡 Response status:", response.status)
+    console.log("📡 Response status:", response.status);
 
     if (!response.ok) {
-      throw new ApiError(`HTTP error! status: ${response.status}`, response.status)
+      throw new ApiError(`HTTP error! status: ${response.status}`, response.status);
     }
 
-    const data = await response.json()
-    console.log("✅ API Response success:", data.mensagem === "sucesso")
+    const data = await response.json();
+    console.log("✅ API Response success:", data.mensagem === "sucesso");
 
     if (data.mensagem !== "sucesso") {
-      throw new ApiError(data.mensagem || "Erro na API")
+      throw new ApiError(data.mensagem || "Erro na API");
     }
 
-    return data
+    return data;
   } catch (error) {
-    console.error("❌ API Error:", { url, error: error instanceof Error ? error.message : error })
+    console.error("❌ API Error:", { url, error: error instanceof Error ? error.message : error });
 
-    // Se HTTPS falhar e ainda não tentamos HTTP, tenta HTTP
     if (retryWithHttp && url.includes("https://")) {
-      const httpUrl = url.replace("https://", "http://")
-      console.log("🔄 Retrying with HTTP:", httpUrl)
-      return apiRequest<T>(httpUrl, false)
+      const httpUrl = url.replace("https://", "http://");
+      console.log("🔄 Retrying with HTTP:", httpUrl);
+      try {
+        return await apiRequest<T>(httpUrl, false);
+      } catch (retryError) {
+        // Lança o erro da nova tentativa se a primeira também falhou
+        throw retryError;
+      }
     }
 
     if (error instanceof ApiError) {
-      throw error
+      throw error;
     }
-    throw new ApiError("Erro de conexão com a API")
+    throw new ApiError("Erro de conexão com a API");
   }
 }
 

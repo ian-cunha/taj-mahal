@@ -421,6 +421,7 @@ export interface ConfiguracaoSite {
   corHeader?: string
   corFooter?: string
   corCard?: string
+  corBorda?: string
   fontePrimaria?: string
   fonteSecundaria?: string
   logoUrl?: string
@@ -428,7 +429,13 @@ export interface ConfiguracaoSite {
   metaTitle?: string
   metaDescription?: string
   metaKeywords?: string
-  [key: string]: string | undefined
+  idImagemFundoBusca?: {
+    urlImagemFundoBusca?: string;
+  }
+  idVideoFundoBusca?: {
+    urlVideoFundoBusca?: string;
+  }
+  [key: string]: any
 }
 
 // Filtros para pesquisa

@@ -1,73 +1,69 @@
-"use client"
-import { Suspense } from "react"
-import { SearchResults } from "@/components/search-results"
-import { SearchFilters } from "@/components/search-filters"
-import { LoadingSpinner } from "@/components/loading-spinner"
+// app/busca/page.tsx - VERSÃO CORRIGIDA
+
+import { Suspense } from "react";
+import { SearchResults } from "@/components/search-results";
+import { SearchFilters } from "@/components/search-filters";
+import { LoadingSpinner } from "@/components/loading-spinner";
+import { listarImoveis, criarFiltroImovel, obterTotalImoveis } from "@/lib/api";
+import type { Imovel } from "@/types/api";
 
 interface SearchPageProps {
   searchParams: {
-    statusImovelStr?: string
-    tipoImovel?: string
-    termo?: string
-    precoMinimo?: string
-    precoMaximo?: string
-    quartosMinimo?: string
-    quartosMaximo?: string
-    idEstado?: string
-    idCidade?: string
-    idBairros?: string
-    page?: string
+    statusImovelStr?: string;
+    tipoImovel?: string;
+    termo?: string;
+    precoMinimo?: string;
+    precoMaximo?: string;
+    quartosMinimo?: string;
+    idEstado?: string;
+    idCidade?: string;
+    idBairros?: string;
+    page?: string;
+  };
+}
+
+async function fetchImoveis(searchParams: SearchPageProps['searchParams']) {
+  const currentPage = Number(searchParams.page || "1");
+  const itemsPerPage = 12;
+
+  // Usamos 'any' para permitir o nome de filtro corrigido
+  const filtro: any = criarFiltroImovel({
+    paginado: true,
+    startpag: (currentPage - 1) * itemsPerPage,
+    pagAtual: currentPage,
+  });
+
+  // Aplica os filtros da URL
+  if (searchParams.tipoImovel && searchParams.tipoImovel !== "all") filtro.tipoImovel = searchParams.tipoImovel;
+  if (searchParams.precoMinimo) filtro.precoMinimo = searchParams.precoMinimo;
+  if (searchParams.precoMaximo) filtro.precoMaximo = searchParams.precoMaximo;
+  if (searchParams.idEstado && searchParams.idEstado !== "all") filtro.idEstado = Number(searchParams.idEstado);
+  if (searchParams.idCidade && searchParams.idCidade !== "all") filtro.idCidade = Number(searchParams.idCidade);
+  if (searchParams.idBairros && searchParams.idBairros !== "all") filtro.idBairros = [Number(searchParams.idBairros)];
+
+  // CORREÇÃO: Usando 'nquartosMinimo' que é o nome correto esperado pela API externa
+  if (searchParams.quartosMinimo && searchParams.quartosMinimo !== "all") {
+    filtro.nquartosMinimo = searchParams.quartosMinimo;
+  }
+
+  try {
+    const [imoveis, total] = await Promise.all([
+      listarImoveis(filtro),
+      obterTotalImoveis(filtro)
+    ]);
+    return { imoveis, total, error: null, currentPage };
+  } catch (err) {
+    console.error("Erro na busca de imóveis (Server):", err);
+    const error = err instanceof Error ? err.message : "Erro desconhecido";
+    return { imoveis: [] as Imovel[], total: 0, error, currentPage };
   }
 }
 
-const properties = [
-  {
-    id: 1,
-    title: "Apartamento Moderno no Centro",
-    price: "R$ 450.000",
-    location: "Centro, São Paulo",
-    bedrooms: 2,
-    bathrooms: 2,
-    area: 85,
-    image: "/placeholder.svg?height=300&width=400",
-    type: "Apartamento",
-  },
-  {
-    id: 2,
-    title: "Casa com Quintal em Condomínio",
-    price: "R$ 680.000",
-    location: "Vila Madalena, São Paulo",
-    bedrooms: 3,
-    bathrooms: 3,
-    area: 150,
-    image: "/placeholder.svg?height=300&width=400",
-    type: "Casa",
-  },
-  {
-    id: 3,
-    title: "Cobertura com Vista Panorâmica",
-    price: "R$ 1.200.000",
-    location: "Moema, São Paulo",
-    bedrooms: 4,
-    bathrooms: 4,
-    area: 200,
-    image: "/placeholder.svg?height=300&width=400",
-    type: "Cobertura",
-  },
-  {
-    id: 4,
-    title: "Studio Compacto e Funcional",
-    price: "R$ 280.000",
-    location: "Liberdade, São Paulo",
-    bedrooms: 1,
-    bathrooms: 1,
-    area: 45,
-    image: "/placeholder.svg?height=300&width=400",
-    type: "Studio",
-  },
-]
+export default async function BuscaPage({ searchParams }: SearchPageProps) {
+  const { imoveis, total, error, currentPage } = await fetchImoveis(searchParams);
+  const itemsPerPage = 12;
+  const totalPages = Math.ceil(total / itemsPerPage);
 
-export default function BuscaPage({ searchParams }: SearchPageProps) {
   return (
     <div className="py-8">
       <div className="container">
@@ -79,9 +75,15 @@ export default function BuscaPage({ searchParams }: SearchPageProps) {
         <SearchFilters />
 
         <Suspense fallback={<LoadingSpinner />}>
-          <SearchResults searchParams={searchParams} />
+          <SearchResults
+            imoveis={imoveis}
+            total={total}
+            error={error}
+            currentPage={currentPage}
+            totalPages={totalPages}
+          />
         </Suspense>
       </div>
     </div>
-  )
+  );
 }

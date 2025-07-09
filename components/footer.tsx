@@ -1,96 +1,113 @@
-import Link from "next/link"
-import { Home, Phone, Mail, MapPin, Facebook, Instagram, Twitter } from "lucide-react"
-import { obterEmpresa } from "@/lib/api"
+import Link from "next/link";
+import Image from "next/image";
+import { Home, Phone, Mail, MapPin, Facebook, Instagram, Youtube } from "lucide-react";
+import { obterEmpresa } from "@/lib/api";
 
 export async function Footer() {
-  let empresa
+  let empresa;
   try {
-    empresa = await obterEmpresa()
-  } catch {
-    // Fallback se não conseguir carregar dados da empresa
-    empresa = {
-      empresanomefantasia: "Taj Mahal - RE.AI.s",
-      tel1: "(11) 9999-9999",
-      email: "teste@tajmahal.com",
-      endereco: "Recife, PE",
-    }
+    empresa = await obterEmpresa();
+  } catch (error) {
+    console.error("Erro ao carregar dados da empresa para o footer:", error);
+    return (
+      <footer className="bg-gray-100">
+        <div className="container py-8 text-center text-gray-500">
+          <p>Não foi possível carregar as informações da imobiliária.</p>
+        </div>
+      </footer>
+    );
   }
 
+  const hasSocialMedia = empresa.facebook || empresa.instagram || empresa.youtube;
+
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-white text-gray-700 border-t">
       <div className="container py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Company Info */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+          <div className="lg:col-span-2 space-y-4">
+            <Link href="/" className="flex items-center space-x-3">
+              {empresa.urlLogomarca ? (
+                <Image
+                  src={empresa.urlLogomarca}
+                  alt={`Logomarca de ${empresa.empresanomefantasia}`}
+                  width={40}
+                  height={40}
+                  className="h-10 w-10 object-contain rounded-md"
+                />
+              ) : (
+                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Home className="w-6 h-6 text-primary-foreground" />
+                </div>
+              )}
+              <span className="text-xl font-bold text-gray-900">{empresa.empresanomefantasia}</span>
+            </Link>
+            {(empresa.slogan || empresa.politicaQualidade) && (
+              <p className="text-gray-600 pr-8">
+                {empresa.slogan || empresa.politicaQualidade}
+              </p>
+            )}
+          </div>
+
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <Home className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-lg font-bold">{empresa.empresanomefantasia}</span>
-            </div>
-            <p className="text-gray-400">Sua imobiliária de confiança. Encontre o imóvel dos seus sonhos conosco.</p>
-            <div className="flex space-x-4">
-              <Facebook className="w-5 h-5 text-gray-400 hover:text-blue-500 cursor-pointer" />
-              <Instagram className="w-5 h-5 text-gray-400 hover:text-pink-500 cursor-pointer" />
-              <Twitter className="w-5 h-5 text-gray-400 hover:text-blue-400 cursor-pointer" />
+            <h3 className="text-lg font-semibold text-gray-900">Contato</h3>
+            <div className="space-y-3">
+              {empresa.tel1 && (
+                // CORREÇÃO: Cor do texto e hover padronizados
+                <a href={`tel:${empresa.tel1.replace(/\D/g, '')}`} className="flex items-center space-x-2 text-gray-700 hover:text-primary transition-colors">
+                  <Phone className="w-4 h-4" />
+                  <span>{empresa.tel1}</span>
+                </a>
+              )}
+              {empresa.email && (
+                // CORREÇÃO: Cor do texto e hover padronizados
+                <a href={`mailto:${empresa.email}`} className="flex items-center space-x-2 text-gray-700 hover:text-primary transition-colors">
+                  <Mail className="w-4 h-4" />
+                  <span className="break-all">{empresa.email}</span>
+                </a>
+              )}
+              {empresa.enderecoFormatado && (
+                <div className="flex items-start space-x-2">
+                  <MapPin className="w-4 h-4 mt-1 flex-shrink-0" />
+                  <span>{empresa.enderecoFormatado}</span>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Links Rápidos</h3>
-            <div className="space-y-2">
-              <Link href="/busca" className="block text-gray-400 hover:text-white transition-colors">
-                Buscar Imóveis
-              </Link>
-              <Link href="/empreendimentos" className="block text-gray-400 hover:text-white transition-colors">
-                Empreendimentos
-              </Link>
-              <Link href="/financie-seu-imovel" className="block text-gray-400 hover:text-white transition-colors">
-                Financiamento
-              </Link>
-              <Link href="/solicite-seu-imovel" className="block text-gray-400 hover:text-white transition-colors">
-                Solicitar Imóvel
-              </Link>
-            </div>
-          </div>
-
-          {/* Services */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Serviços</h3>
-            <div className="space-y-2">
-              <p className="text-gray-400">Compra de Imóveis</p>
-              <p className="text-gray-400">Venda de Imóveis</p>
-              <p className="text-gray-400">Locação</p>
-              <p className="text-gray-400">Avaliação</p>
-              <p className="text-gray-400">Consultoria</p>
-            </div>
-          </div>
-
-          {/* Contact */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Contato</h3>
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Phone className="w-4 h-4 text-gray-400" />
-                <span className="text-gray-400">{empresa.tel1}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Mail className="w-4 h-4 text-gray-400" />
-                <span className="text-gray-400">{empresa.email}</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <MapPin className="w-4 h-4 text-gray-400" />
-                <span className="text-gray-400">{empresa.endereco}</span>
+          {hasSocialMedia && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900">Siga-nos</h3>
+              <div className="flex space-x-4">
+                {empresa.facebook && (
+                  // CORREÇÃO: Cor do ícone e hover padronizados
+                  <Link href={empresa.facebook} target="_blank" className="text-gray-500 hover:text-primary transition-colors">
+                    <Facebook className="w-6 h-6" />
+                  </Link>
+                )}
+                {empresa.instagram && (
+                  // CORREÇÃO: Cor do ícone e hover padronizados
+                  <Link href={empresa.instagram} target="_blank" className="text-gray-500 hover:text-primary transition-colors">
+                    <Instagram className="w-6 h-6" />
+                  </Link>
+                )}
+                {empresa.youtube && (
+                  // CORREÇÃO: Cor do ícone e hover padronizados
+                  <Link href={empresa.youtube} target="_blank" className="text-gray-500 hover:text-primary transition-colors">
+                    <Youtube className="w-6 h-6" />
+                  </Link>
+                )}
               </div>
             </div>
-          </div>
+          )}
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-          <p className="text-gray-400">© 2024 {empresa.empresanomefantasia}. Todos os direitos reservados.</p>
+        <div className="border-t border-gray-200 mt-8 pt-8 text-center">
+          <p className="text-gray-500">
+            © {new Date().getFullYear()} {empresa.empresanomefantasia}. Todos os direitos reservados.
+          </p>
         </div>
       </div>
     </footer>
-  )
+  );
 }

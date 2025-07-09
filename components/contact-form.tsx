@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -37,7 +36,6 @@ export function ContactForm() {
             required
           />
         </div>
-
         <div>
           <Label htmlFor="email">E-mail</Label>
           <Input
@@ -50,7 +48,6 @@ export function ContactForm() {
           />
         </div>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="telefone">Telefone</Label>
@@ -61,7 +58,6 @@ export function ContactForm() {
             onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
           />
         </div>
-
         <div>
           <Label htmlFor="assunto">Assunto</Label>
           <Input
@@ -73,7 +69,6 @@ export function ContactForm() {
           />
         </div>
       </div>
-
       <div>
         <Label htmlFor="mensagem">Mensagem</Label>
         <Textarea
@@ -85,8 +80,8 @@ export function ContactForm() {
           required
         />
       </div>
-
-      <Button type="submit" size="lg" className="w-full btn-primary">
+      {/* CORREÇÃO: Removida a classe 'btn-primary' */}
+      <Button type="submit" size="lg" className="w-full">
         <Send className="w-4 h-4 mr-2" />
         Enviar Mensagem
       </Button>

@@ -1,22 +1,47 @@
-import { obterEstados } from "@/lib/api"
-import { NextResponse } from "next/server"
+// app/api/localizacao/estados/route.ts
 
-export async function GET() {
+import { obterEstados, criarFiltroImovel, listarImoveis } from "@/lib/api";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import type { Estado, Imovel } from "@/types/api";
+
+export async function GET(request: NextRequest) {
   try {
-    const estados = await obterEstados()
-    return NextResponse.json(estados)
+    const { searchParams } = new URL(request.url);
+    const tipoImovel = searchParams.get('tipoImovel');
+
+    // O filtro é aplicado apenas se o tipo de imóvel for especificado
+    const filtro = criarFiltroImovel({ quantidadeImoveis: 9999, paginado: false });
+    if (tipoImovel && tipoImovel !== 'all') {
+      filtro.tipoImovel = tipoImovel;
+    }
+
+    const [estados, imoveis] = await Promise.all([
+      obterEstados(),
+      listarImoveis(filtro)
+    ]);
+
+    const contagemPorEstado: Record<string, number> = {};
+    imoveis.forEach((imovel: Imovel) => {
+      if (imovel.siglaEstado) {
+        contagemPorEstado[imovel.siglaEstado] = (contagemPorEstado[imovel.siglaEstado] || 0) + 1;
+      }
+    });
+
+    const estadosComContagem = estados
+      .map(estado => ({
+        ...estado,
+        contagem: contagemPorEstado[estado.uf] || 0,
+      }))
+      .filter(estado => estado.contagem > 0);
+
+    return NextResponse.json(estadosComContagem);
+
   } catch (error) {
-    console.error("Proxy erro estados:", error)
-
-    // Retorna dados de fallback em caso de erro
-    const estadosFallback = [
-      { codigo: 25, nome: "São Paulo", uf: "SP" },
-      { codigo: 19, nome: "Rio de Janeiro", uf: "RJ" },
-      { codigo: 13, nome: "Minas Gerais", uf: "MG" },
-      { codigo: 23, nome: "Santa Catarina", uf: "SC" },
-      { codigo: 21, nome: "Rio Grande do Sul", uf: "RS" },
-    ]
-
-    return NextResponse.json(estadosFallback)
+    console.error("Proxy erro estados com contagem:", error);
+    return new NextResponse(
+      JSON.stringify({ message: "Erro ao buscar estados" }),
+      { status: 500 }
+    );
   }
 }
