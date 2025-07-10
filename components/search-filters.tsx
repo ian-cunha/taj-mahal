@@ -104,7 +104,7 @@ export function SearchFilters() {
   return (
     <Card className="mb-8">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2"><Filter size={20} /> Filtros Dinâmicos</CardTitle>
+        <CardTitle className="flex items-center gap-2"><Filter size={20} /> Filtros Personalizados</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 pt-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -142,8 +142,8 @@ export function SearchFilters() {
         </div>
 
         <div className="flex justify-end gap-4 pt-4">
-          <Button onClick={clearFilters} variant="ghost"><RotateCcw size={16} className="mr-2" />Limpar Filtros</Button>
-          <Button onClick={applyFilters}><Search size={16} className="mr-2" />Aplicar Filtros</Button>
+          <Button onClick={clearFilters} variant="ghost"><RotateCcw size={16} className="mr-2" />Limpar</Button>
+          <Button onClick={applyFilters}><Search size={16} className="mr-2" />Buscar</Button>
         </div>
       </CardContent>
     </Card>
