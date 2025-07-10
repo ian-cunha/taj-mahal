@@ -34,7 +34,7 @@ export function HeaderClient({ companyName, logoUrl }: HeaderClientProps) {
                 alt={`Logomarca de ${companyName}`}
                 width={40}
                 height={40}
-                className="h-10 w-auto object-contain"
+                className="h-10 w-auto object-contain rounded-sm"
               />
             ) : (
               // O ícone de fallback agora usa as cores primárias

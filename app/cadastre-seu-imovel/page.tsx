@@ -33,7 +33,7 @@ export default function CadastreImovelPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     console.log("Form submitted:", formData)
-    // Handle form submission
+    // Handle form submit
   }
 
   return (
@@ -45,7 +45,7 @@ export default function CadastreImovelPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Property Information */}
+          {/* Informações da propriedade */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -137,7 +137,7 @@ export default function CadastreImovelPage() {
             </CardContent>
           </Card>
 
-          {/* Location */}
+          {/* Localização */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -151,23 +151,13 @@ export default function CadastreImovelPage() {
                 <Label htmlFor="endereco">Endereço</Label>
                 <Input
                   id="endereco"
-                  placeholder="Rua das Flores, 123"
+                  placeholder="Rua José Bonifácio, 667"
                   value={formData.endereco}
                   onChange={(e) => setFormData({ ...formData, endereco: e.target.value })}
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="cidade">Cidade</Label>
-                  <Input
-                    id="cidade"
-                    placeholder="São Paulo"
-                    value={formData.cidade}
-                    onChange={(e) => setFormData({ ...formData, cidade: e.target.value })}
-                  />
-                </div>
-
                 <div>
                   <Label htmlFor="estado">Estado</Label>
                   <Select
@@ -178,19 +168,52 @@ export default function CadastreImovelPage() {
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="SP">São Paulo</SelectItem>
-                      <SelectItem value="RJ">Rio de Janeiro</SelectItem>
+                      <SelectItem value="AC">Acre</SelectItem>
+                      <SelectItem value="AL">Alagoas</SelectItem>
+                      <SelectItem value="AP">Amapá</SelectItem>
+                      <SelectItem value="AM">Amazonas</SelectItem>
+                      <SelectItem value="BA">Bahia</SelectItem>
+                      <SelectItem value="CE">Ceará</SelectItem>
+                      <SelectItem value="DF">Distrito Federal</SelectItem>
+                      <SelectItem value="ES">Espírito Santo</SelectItem>
+                      <SelectItem value="GO">Goiás</SelectItem>
+                      <SelectItem value="MA">Maranhão</SelectItem>
+                      <SelectItem value="MT">Mato Grosso</SelectItem>
+                      <SelectItem value="MS">Mato Grosso do Sul</SelectItem>
                       <SelectItem value="MG">Minas Gerais</SelectItem>
+                      <SelectItem value="PA">Pará</SelectItem>
+                      <SelectItem value="PB">Paraíba</SelectItem>
+                      <SelectItem value="PR">Paraná</SelectItem>
+                      <SelectItem value="PE">Pernambuco</SelectItem>
+                      <SelectItem value="PI">Piauí</SelectItem>
+                      <SelectItem value="RJ">Rio de Janeiro</SelectItem>
+                      <SelectItem value="RN">Rio Grande do Norte</SelectItem>
                       <SelectItem value="RS">Rio Grande do Sul</SelectItem>
+                      <SelectItem value="RO">Rondônia</SelectItem>
+                      <SelectItem value="RR">Roraima</SelectItem>
+                      <SelectItem value="SC">Santa Catarina</SelectItem>
+                      <SelectItem value="SP">São Paulo</SelectItem>
+                      <SelectItem value="SE">Sergipe</SelectItem>
+                      <SelectItem value="TO">Tocantins</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="cidade">Cidade</Label>
+                  <Input
+                    id="cidade"
+                    placeholder="Recife"
+                    value={formData.cidade}
+                    onChange={(e) => setFormData({ ...formData, cidade: e.target.value })}
+                  />
                 </div>
 
                 <div>
                   <Label htmlFor="cep">CEP</Label>
                   <Input
                     id="cep"
-                    placeholder="01234-567"
+                    placeholder="50710-001"
                     value={formData.cep}
                     onChange={(e) => setFormData({ ...formData, cep: e.target.value })}
                   />
@@ -199,7 +222,7 @@ export default function CadastreImovelPage() {
             </CardContent>
           </Card>
 
-          {/* Photos */}
+          {/* Fotos */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -220,7 +243,7 @@ export default function CadastreImovelPage() {
             </CardContent>
           </Card>
 
-          {/* Contact Information */}
+          {/* Informações de contato */}
           <Card>
             <CardHeader>
               <CardTitle>Seus Dados de Contato</CardTitle>

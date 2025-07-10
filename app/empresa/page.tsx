@@ -73,7 +73,7 @@ export default async function EmpresaPage() {
                 alt={`Logomarca de ${empresa.empresanomefantasia}`}
                 width={200}
                 height={100}
-                className="h-24 w-auto object-contain"
+                className="h-24 w-auto object-contain rounded-sm"
                 priority
               />
             </div>

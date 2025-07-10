@@ -19,6 +19,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Building,
+  Printer,
 } from "lucide-react"
 import { formatarPreco, obterTipoImovelNome, obterCaracteristicas } from "@/lib/api"
 import type { Imovel } from "@/types/api"
@@ -79,7 +80,7 @@ export function ImovelDetails({ imovel }: ImovelDetailsProps) {
           )}
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm"><Heart className="w-4 h-4 mr-2" />Favoritar</Button>
+          <Button variant="outline" size="sm"><Printer className="w-4 h-4 mr-2" />Imprimir</Button>
           <Button variant="outline" size="sm"><Share2 className="w-4 h-4 mr-2" />Compartilhar</Button>
         </div>
       </div>
