@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Bed, Bath, Square, Heart } from "lucide-react";
+import { MapPin, Bed, Bath, Square } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { formatarPreco, obterTipoImovelNome } from "@/lib/api";
@@ -79,9 +79,6 @@ export function SearchResults({ imoveis, total, error, currentPage, totalPages }
                 {imovel.paraVenda && <Badge variant="default">{imovel.paraLocacao ? "Venda / Locação" : "Venda"}</Badge>}
                 {!imovel.paraVenda && imovel.paraLocacao && <Badge variant="destructive">Locação</Badge>}
               </div>
-              <Button variant="ghost" size="icon" className="absolute bottom-4 right-4 bg-white/80 hover:bg-white">
-                <Heart className="w-4 h-4" />
-              </Button>
             </div>
 
             <CardHeader>

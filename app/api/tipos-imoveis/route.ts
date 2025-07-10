@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import type { Imovel } from "@/types/api";
 
+export const revalidate = 3600; // Cache por 1 hora
+
 const TODOS_OS_TIPOS = [
     { id: "1", nome: "Apartamento" }, { id: "2", nome: "Casa" },
     { id: "3", nome: "Loja" }, { id: "4", nome: "Terreno/Loteamento" },

@@ -1,10 +1,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { MapPin, Bed, Bath, Square, Heart } from "lucide-react"
+import { MapPin, Bed, Bath, Square } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { listarImoveis, formatarPreco, obterTipoImovelNome, criarFiltroImovel, obterImovel } from "@/lib/api"
+import { listarImoveis, formatarPreco, obterTipoImovelNome, criarFiltroImovel } from "@/lib/api"
 import type { Imovel } from "@/types/api"
 
 export async function FeaturedProperties() {
@@ -18,11 +18,12 @@ export async function FeaturedProperties() {
 
     const imoveisDestaque = await listarImoveis(filtro)
 
-    // Busca os detalhes de cada imóvel para obter o tipo de operação
-    const imoveisComDetalhes = await Promise.all(
-      imoveisDestaque.map(imovel => obterImovel(imovel.codigoImovel))
-    );
-    imoveis = imoveisComDetalhes;
+    // Otimização: Removemos o loop N+1.
+    imoveis = imoveisDestaque.map(imovel => ({
+      ...imovel,
+      paraVenda: imovel.tipoOperacao.includes('V'),
+      paraLocacao: imovel.tipoOperacao.includes('L'),
+    }));
 
   } catch (error) {
     console.error("Erro ao carregar imóveis em destaque:", error)
@@ -83,9 +84,6 @@ export async function FeaturedProperties() {
                   {imovel.paraVenda && <Badge variant="default">{imovel.paraLocacao ? "Venda / Locação" : "Venda"}</Badge>}
                   {!imovel.paraVenda && imovel.paraLocacao && <Badge variant="destructive">Locação</Badge>}
                 </div>
-                <Button variant="ghost" size="icon" className="absolute bottom-4 right-4 bg-white/80 hover:bg-white">
-                  <Heart className="w-4 h-4" />
-                </Button>
               </div>
 
               <CardHeader>

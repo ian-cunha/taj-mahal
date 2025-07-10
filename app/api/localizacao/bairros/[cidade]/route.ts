@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import type { Bairro, Imovel } from "@/types/api";
 
+export const revalidate = 3600; // Cache por 1 hora
+
 export async function GET(request: NextRequest, { params }: { params: { cidade: string } }) {
   try {
     const { searchParams } = new URL(request.url);

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { criarFiltroImovel, obterTotalImoveis } from "@/lib/api"
 
-export const dynamic = "force-dynamic" // evita cache inesperado
+export const revalidate = 3600; // Cache por 1 hora
 
 export async function GET() {
   try {

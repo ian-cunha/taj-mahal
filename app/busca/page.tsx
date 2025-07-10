@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { SearchResults } from "@/components/search-results";
 import { SearchFilters } from "@/components/search-filters";
 import { LoadingSpinner } from "@/components/loading-spinner";
-import { listarImoveis, obterImovel, criarFiltroImovel, obterTotalImoveis } from "@/lib/api";
+import { listarImoveis, obterTotalImoveis, criarFiltroImovel } from "@/lib/api";
 import type { Imovel } from "@/types/api";
 
 interface SearchPageProps {
@@ -46,10 +46,12 @@ async function fetchImoveis(searchParams: SearchPageProps['searchParams']) {
       obterTotalImoveis(filtro)
     ]);
 
-    // Busca os detalhes de cada imóvel para obter o tipo de operação
-    const imoveisComDetalhes = await Promise.all(
-      imoveis.map(imovel => obterImovel(imovel.codigoImovel))
-    );
+    // Otimização: Removemos o loop N+1. Os dados de operação agora vêm da lista.
+    const imoveisComDetalhes = imoveis.map(imovel => ({
+      ...imovel,
+      paraVenda: imovel.tipoOperacao.includes('V'),
+      paraLocacao: imovel.tipoOperacao.includes('L'),
+    }));
 
     return { imoveis: imoveisComDetalhes, total, error: null, currentPage };
   } catch (err) {

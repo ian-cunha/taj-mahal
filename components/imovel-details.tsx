@@ -12,7 +12,6 @@ import {
   Bath,
   Square,
   Car,
-  Heart,
   Share2,
   Phone,
   Mail,

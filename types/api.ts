@@ -52,7 +52,7 @@ export interface Imovel {
   nomeMostrarInternet: "0" | "1"
   tipoImovel: string
   idTipoImovel: string
-  tipoOperacao: "V" | "L"
+  tipoOperacao: string
   paraVenda: boolean
   paraLocacao: boolean
   descricaoTipoOperacao: string

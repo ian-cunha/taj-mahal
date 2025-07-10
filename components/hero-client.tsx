@@ -14,7 +14,7 @@ type EstadoComContagem = Estado & { contagem: number };
 type CidadeComContagem = Cidade & { contagem: number };
 
 interface HeroClientProps {
-  companyName: string; // Propriedade para receber o nome da empresa
+  companyName: string;
   videoUrl?: string | null;
   imageUrl?: string | null;
 }
@@ -30,9 +30,7 @@ export function HeroClient({ companyName, videoUrl, imageUrl }: HeroClientProps)
   })
 
   const [loading, setLoading] = useState({
-    disponibilidade: true,
-    tipos: true,
-    estados: true,
+    initial: true,
     cidades: false,
   })
 
@@ -43,45 +41,50 @@ export function HeroClient({ companyName, videoUrl, imageUrl }: HeroClientProps)
     idCidade: "all",
   })
 
-  const fetchData = useCallback(async (endpoint: string, setter: (data: any) => void, field: keyof typeof loading) => {
-    setLoading(l => ({ ...l, [field]: true }))
-    try {
-      const res = await fetch(endpoint)
-      if (res.ok) {
-        setter(await res.json())
-      } else {
-        setter([])
-      }
-    } catch (e) {
-      console.error(`Erro ao buscar ${field}:`, e)
-      setter([])
-    } finally {
-      setLoading(l => ({ ...l, [field]: false }))
-    }
-  }, [])
-
+  // Hook para buscar os dados iniciais dos filtros de uma só vez
   useEffect(() => {
-    const { tipoOperacao, tipoImovel, idEstado } = searchData;
+    const fetchInitialData = async () => { // CORREÇÃO: Adicionado 'async'
+      setLoading(l => ({ ...l, initial: true }));
+      try {
+        const res = await fetch('/api/initial-filters');
+        if (res.ok) {
+          const data = await res.json();
+          setDisponibilidade(data.disponibilidade);
+          setOptions(o => ({ ...o, tipos: data.tipos, estados: data.estados }));
+        }
+      } catch (e) {
+        console.error("Erro ao buscar filtros iniciais:", e);
+      } finally {
+        setLoading(l => ({ ...l, initial: false }));
+      }
+    };
+    fetchInitialData();
+  }, []);
 
-    const buildParams = (excludeKey: string = '') => {
-      const params = new URLSearchParams();
-      if (tipoOperacao) params.set('statusImovelStr', tipoOperacao)
-      if (tipoImovel !== 'all' && excludeKey !== 'tipoImovel') params.set('tipoImovel', tipoImovel);
-      if (idEstado !== 'all' && excludeKey !== 'idEstado') params.set('idEstado', idEstado);
-      return params.toString();
-    }
-
-    fetchData('/api/disponibilidade', setDisponibilidade, 'disponibilidade');
-    fetchData(`/api/tipos-imoveis?${buildParams('tipoImovel')}`, (data) => setOptions(o => ({ ...o, tipos: data })), 'tipos');
-    fetchData(`/api/localizacao/estados?${buildParams('idEstado')}`, (data) => setOptions(o => ({ ...o, estados: data })), 'estados');
-
-    if (idEstado !== 'all') {
-      fetchData(`/api/localizacao/cidades/${idEstado}?${buildParams('idCidade')}`, (data) => setOptions(o => ({ ...o, cidades: data })), 'cidades');
+  // Hook para buscar cidades quando o estado muda
+  useEffect(() => {
+    if (searchData.idEstado !== 'all') {
+      const fetchCidades = async () => { // CORREÇÃO: Adicionado 'async'
+        setLoading(l => ({ ...l, cidades: true }));
+        try {
+          const params = new URLSearchParams({ tipoImovel: searchData.tipoImovel, statusImovelStr: searchData.tipoOperacao });
+          const res = await fetch(`/api/localizacao/cidades/${searchData.idEstado}?${params.toString()}`);
+          if (res.ok) {
+            const cidades = await res.json();
+            setOptions(o => ({ ...o, cidades }));
+          }
+        } catch (e) {
+          console.error(`Erro ao buscar cidades:`, e);
+          setOptions(o => ({ ...o, cidades: [] }));
+        } finally {
+          setLoading(l => ({ ...l, cidades: false }));
+        }
+      };
+      fetchCidades();
     } else {
       setOptions(o => ({ ...o, cidades: [] }));
     }
-  }, [searchData.tipoOperacao, searchData.tipoImovel, searchData.idEstado, fetchData]);
-
+  }, [searchData.idEstado, searchData.tipoImovel, searchData.tipoOperacao]);
 
   const handleSearch = () => {
     const params = new URLSearchParams()
@@ -116,22 +119,22 @@ export function HeroClient({ companyName, videoUrl, imageUrl }: HeroClientProps)
             Com a {companyName}, você encontra as melhores oportunidades do mercado imobiliário
           </p>
           <div className="bg-white rounded-lg p-6 shadow-xl">
-            {!loading.disponibilidade && (
+            {!loading.initial && (
               <div className="flex flex-wrap gap-4 mb-4">
-                {disponibilidade.temVenda && <Button variant={searchData.tipoOperacao === "V" ? "default" : "outline"} onClick={() => setSearchData({ ...searchData, tipoOperacao: "V" })} className="flex-1 min-w-[120px]"><Home className="w-4 h-4 mr-2" />Comprar</Button>}
-                {disponibilidade.temLocacao && <Button variant={searchData.tipoOperacao === "L" ? "default" : "outline"} onClick={() => setSearchData({ ...searchData, tipoOperacao: "L" })} className="flex-1 min-w-[120px]"><DollarSign className="w-4 h-4 mr-2" />Alugar</Button>}
+                {disponibilidade.temVenda && <Button variant={searchData.tipoOperacao === "V" ? "default" : "outline"} onClick={() => setSearchData({ ...searchData, tipoOperacao: "V", idEstado: 'all', idCidade: 'all' })} className="flex-1 min-w-[120px]"><Home className="w-4 h-4 mr-2" />Comprar</Button>}
+                {disponibilidade.temLocacao && <Button variant={searchData.tipoOperacao === "L" ? "default" : "outline"} onClick={() => setSearchData({ ...searchData, tipoOperacao: "L", idEstado: 'all', idCidade: 'all' })} className="flex-1 min-w-[120px]"><DollarSign className="w-4 h-4 mr-2" />Alugar</Button>}
               </div>
             )}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Select value={searchData.tipoImovel} onValueChange={(v) => setSearchData(f => ({ ...f, tipoImovel: v, idEstado: 'all', idCidade: 'all' }))} disabled={loading.tipos}>
-                <SelectTrigger><SelectValue placeholder={loading.tipos ? "Carregando..." : "Tipo de Imóvel"} /></SelectTrigger>
+              <Select value={searchData.tipoImovel} onValueChange={(v) => setSearchData(f => ({ ...f, tipoImovel: v, idEstado: 'all', idCidade: 'all' }))} disabled={loading.initial}>
+                <SelectTrigger><SelectValue placeholder={loading.initial ? "Carregando..." : "Tipo de Imóvel"} /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os tipos</SelectItem>
                   {options.tipos.map(t => <SelectItem key={t.id} value={String(t.id)}>{t.nome} ({t.contagem})</SelectItem>)}
                 </SelectContent>
               </Select>
-              <Select value={searchData.idEstado} onValueChange={(v) => setSearchData(f => ({ ...f, idEstado: v, idCidade: 'all' }))} disabled={loading.estados}>
-                <SelectTrigger><SelectValue placeholder={loading.estados ? "Carregando..." : "Estado"} /></SelectTrigger>
+              <Select value={searchData.idEstado} onValueChange={(v) => setSearchData(f => ({ ...f, idEstado: v, idCidade: 'all' }))} disabled={loading.initial}>
+                <SelectTrigger><SelectValue placeholder={loading.initial ? "Carregando..." : "Estado"} /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os estados</SelectItem>
                   {options.estados.map(e => <SelectItem key={e.codigo} value={String(e.codigo)}>{e.nome} ({e.contagem})</SelectItem>)}
