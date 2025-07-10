@@ -1,5 +1,3 @@
-// app/api/localizacao/bairros/[cidade]/route.ts
-
 import { obterBairros, criarFiltroImovel, listarImoveis } from "@/lib/api";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";

@@ -1,4 +1,4 @@
-// Tipos baseados na documentação da API SMART Imobiliário
+// Tipos baseados na documentação da API RE.AI.s
 
 export interface ApiResponse<T> {
   mensagem: string
@@ -6,7 +6,6 @@ export interface ApiResponse<T> {
 }
 
 export interface Imovel {
-  temElevador: string
   codigoImovel: string
   codigoReferenciaImovel: string
   dataCadastroImovel: string
@@ -184,6 +183,7 @@ export interface Imovel {
   condominioFechado: "0" | "1"
   temHidrometroIndividual: "0" | "1"
   temPortaria24h: "0" | "1"
+  temElevador: "0" | "1"
   litoral: "0" | "1"
   Popular: "0" | "1"
   distanciaCidade: number
@@ -397,7 +397,7 @@ export interface Empresa {
   uf: number
   cep: string
   urlLogomarca: string
-  // Campos adicionais baseados na documentação
+  // Campos adicionais
   enderecoFormatado?: string
   slogan?: string
   politicaQualidade?: string

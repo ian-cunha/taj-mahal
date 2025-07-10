@@ -20,7 +20,7 @@ export function ContactForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     console.log("Form submitted:", formData)
-    // Handle form submission
+    // Handle form submit
   }
 
   return (
@@ -80,7 +80,6 @@ export function ContactForm() {
           required
         />
       </div>
-      {/* CORREÇÃO: Removida a classe 'btn-primary' */}
       <Button type="submit" size="lg" className="w-full">
         <Send className="w-4 h-4 mr-2" />
         Enviar Mensagem

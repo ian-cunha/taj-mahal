@@ -1,7 +1,5 @@
-// components/header.tsx
-
 import { obterEmpresa } from "@/lib/api"
-import { HeaderClient } from "./header-client" // Importa o componente de cliente
+import { HeaderClient } from "./header-client"
 
 export async function Header() {
     let companyName = "Taj Mahal"; // Fallback

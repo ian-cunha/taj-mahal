@@ -1,5 +1,3 @@
-// app/empresa/page.tsx - VERSÃO COM CORES PADRONIZADAS
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,7 +34,6 @@ const SocialLink = ({ icon: Icon, name, href }: { icon: React.ElementType, name:
   if (!href) return null;
 
   return (
-    // CORREÇÃO: Cor do texto e hover padronizados
     <Link href={href} target="_blank" className="flex items-center space-x-3 p-3 rounded-lg text-gray-700 hover:text-primary hover:bg-secondary transition-colors">
       <Icon className="w-5 h-5" />
       <span>{name}</span>

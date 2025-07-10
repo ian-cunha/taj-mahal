@@ -326,7 +326,7 @@ export default function SoliciteImovelPage() {
           </Card>
 
           <div className="text-center">
-            <Button type="submit" size="lg" className="btn-primary">
+            <Button type="submit" size="lg" className="w-full">
               <Send className="w-4 h-4 mr-2" />
               Enviar Solicitação
             </Button>

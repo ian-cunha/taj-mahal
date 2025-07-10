@@ -1,5 +1,3 @@
-// app/contato/page.tsx - VERSÃO FINAL E CORRIGIDA
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, Mail, MapPin, Youtube, Facebook, Instagram } from "lucide-react";
 import Link from "next/link";
@@ -56,7 +54,7 @@ export default async function ContatoPage() {
   const hasSocialMedia = empresa.facebook || empresa.instagram || empresa.youtube || empresa.whatsapp;
   const fullAddress = empresa.enderecoFormatado || empresa.endereco;
 
-  // CORREÇÃO DEFINITIVA: Usando a URL padrão e correta do Google Maps para embed
+  // Usa a URL padrão do Google Maps para embed
   const mapSrc = `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress ?? '')}&output=embed`;
 
   return (
@@ -110,7 +108,7 @@ export default async function ContatoPage() {
           </div>
         </div>
 
-        {/* Mapa com iframe corrigido */}
+        {/* Mapa com iframe */}
         <div className="mt-12">
           <Card>
             <CardHeader>

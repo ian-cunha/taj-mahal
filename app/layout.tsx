@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
   try {
     const empresa = await obterEmpresa()
     return {
-      title: `${empresa.empresanomefantasia} - Imóveis`,
+      title: `${empresa.empresanomefantasia}`,
       description: `Encontre o imóvel dos seus sonhos com ${empresa.empresanomefantasia}. Compra, venda e financiamento de imóveis.`,
     }
   } catch {

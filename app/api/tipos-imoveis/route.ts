@@ -1,5 +1,3 @@
-// app/api/tipos-imoveis/route.ts
-
 import { criarFiltroImovel, listarImoveis } from "@/lib/api";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";

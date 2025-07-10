@@ -53,14 +53,12 @@ export async function Footer() {
             <h3 className="text-lg font-semibold text-gray-900">Contato</h3>
             <div className="space-y-3">
               {empresa.tel1 && (
-                // CORREÇÃO: Cor do texto e hover padronizados
                 <a href={`tel:${empresa.tel1.replace(/\D/g, '')}`} className="flex items-center space-x-2 text-gray-700 hover:text-primary transition-colors">
                   <Phone className="w-4 h-4" />
                   <span>{empresa.tel1}</span>
                 </a>
               )}
               {empresa.email && (
-                // CORREÇÃO: Cor do texto e hover padronizados
                 <a href={`mailto:${empresa.email}`} className="flex items-center space-x-2 text-gray-700 hover:text-primary transition-colors">
                   <Mail className="w-4 h-4" />
                   <span className="break-all">{empresa.email}</span>
@@ -80,19 +78,16 @@ export async function Footer() {
               <h3 className="text-lg font-semibold text-gray-900">Siga-nos</h3>
               <div className="flex space-x-4">
                 {empresa.facebook && (
-                  // CORREÇÃO: Cor do ícone e hover padronizados
                   <Link href={empresa.facebook} target="_blank" className="text-gray-500 hover:text-primary transition-colors">
                     <Facebook className="w-6 h-6" />
                   </Link>
                 )}
                 {empresa.instagram && (
-                  // CORREÇÃO: Cor do ícone e hover padronizados
                   <Link href={empresa.instagram} target="_blank" className="text-gray-500 hover:text-primary transition-colors">
                     <Instagram className="w-6 h-6" />
                   </Link>
                 )}
                 {empresa.youtube && (
-                  // CORREÇÃO: Cor do ícone e hover padronizados
                   <Link href={empresa.youtube} target="_blank" className="text-gray-500 hover:text-primary transition-colors">
                     <Youtube className="w-6 h-6" />
                   </Link>

@@ -53,7 +53,7 @@ export function ImovelDetails({ imovel }: ImovelDetailsProps) {
 
   const fullAddress = addressParts.join(', ')
 
-  // CORREÇÃO: Usar a URL do Google Maps Embed API com uma chave de API
+  // Usa a URL do Google Maps Embed API com uma chave de API
   const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(fullAddress)}&output=embed`
 
   return (

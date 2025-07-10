@@ -274,7 +274,7 @@ export default function CadastreImovelPage() {
           </Card>
 
           <div className="text-center">
-            <Button type="submit" size="lg" className="btn-primary">
+            <Button type="submit" size="lg" className="w-full">
               Cadastrar Imóvel
             </Button>
           </div>

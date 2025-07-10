@@ -16,14 +16,13 @@ export function JobApplicationForm() {
     telefone: "",
     cargo: "",
     experiencia: "",
-    motivacao: "",
     creci: "",
   })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     console.log("Form submitted:", formData)
-    // Handle form submission
+    // Handle form submit
   }
 
   return (
@@ -98,17 +97,6 @@ export function JobApplicationForm() {
         />
       </div>
       <div>
-        <Label htmlFor="motivacao">Por que quer trabalhar conosco?</Label>
-        <Textarea
-          id="motivacao"
-          placeholder="Conte-nos sua motivação..."
-          value={formData.motivacao}
-          onChange={(e) => setFormData({ ...formData, motivacao: e.target.value })}
-          rows={4}
-          required
-        />
-      </div>
-      <div>
         <Label>Currículo</Label>
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
           <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
@@ -120,7 +108,6 @@ export function JobApplicationForm() {
         </div>
       </div>
       <div className="text-center">
-        {/* CORREÇÃO: Removida a classe 'btn-primary' */}
         <Button type="submit" size="lg">
           <Send className="w-4 h-4 mr-2" />
           Enviar Candidatura

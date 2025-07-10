@@ -50,7 +50,6 @@ export function HeaderClient({ companyName, logoUrl }: HeaderClientProps) {
               <Link
                 key={item.name}
                 href={item.href}
-                // CORREÇÃO: Usando a cor primária no hover
                 className="flex items-center space-x-1 text-gray-700 hover:text-primary transition-colors duration-200"
               >
                 <item.icon className="w-4 h-4" />
@@ -73,7 +72,6 @@ export function HeaderClient({ companyName, logoUrl }: HeaderClientProps) {
                 <Link
                   key={item.name}
                   href={item.href}
-                  // CORREÇÃO: Usando a cor primária no hover
                   className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-primary hover:bg-secondary rounded-lg transition-colors duration-200"
                   onClick={() => setIsMenuOpen(false)}
                 >

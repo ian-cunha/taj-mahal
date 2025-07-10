@@ -1,5 +1,3 @@
-// app/busca/page.tsx - VERSÃO CORRIGIDA
-
 import { Suspense } from "react";
 import { SearchResults } from "@/components/search-results";
 import { SearchFilters } from "@/components/search-filters";

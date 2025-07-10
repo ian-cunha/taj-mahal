@@ -116,7 +116,6 @@ export function SearchFilters() {
             </SelectContent>
           </Select>
 
-          {/* CORREÇÃO AQUI: Usando 'e.codigo' e 'e.nome' */}
           <Select value={selectedFilters.idEstado} onValueChange={(v) => handleSelectChange('idEstado', v)} disabled={loading.estados}>
             <SelectTrigger><SelectValue placeholder={loading.estados ? "Carregando..." : "Estado"} /></SelectTrigger>
             <SelectContent>
@@ -125,7 +124,6 @@ export function SearchFilters() {
             </SelectContent>
           </Select>
 
-          {/* CORREÇÃO AQUI: Usando 'c.codigo' e 'c.cidade' */}
           <Select value={selectedFilters.idCidade} onValueChange={(v) => handleSelectChange('idCidade', v)} disabled={loading.cidades || selectedFilters.idEstado === 'all'}>
             <SelectTrigger><SelectValue placeholder={loading.cidades ? "Carregando..." : "Cidade"} /></SelectTrigger>
             <SelectContent>
@@ -134,7 +132,6 @@ export function SearchFilters() {
             </SelectContent>
           </Select>
 
-          {/* CORREÇÃO AQUI: Usando 'b.codigo' e 'b.bairro' */}
           <Select value={selectedFilters.idBairros} onValueChange={(v) => handleSelectChange('idBairros', v)} disabled={loading.bairros || selectedFilters.idCidade === 'all'}>
             <SelectTrigger><SelectValue placeholder={loading.bairros ? "Carregando..." : "Bairro"} /></SelectTrigger>
             <SelectContent>

@@ -1,5 +1,3 @@
-// app/trabalhe-conosco/page.tsx - VERSÃO 100% DINÂMICA SEM TEXTO ESTÁTICO
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { obterEmpresa } from "@/lib/api";
 import { JobApplicationForm } from "@/components/job-application-form";

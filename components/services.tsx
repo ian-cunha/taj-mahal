@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Briefcase, Key, Landmark, Upload } from 'lucide-react'
 
-// Array com as novas seções de serviços/ações
+// Array com as seções de serviços/ações
 const services = [
   {
     icon: Briefcase,
@@ -14,19 +14,19 @@ const services = [
     icon: Key,
     title: 'Solicite seu Imóvel',
     description: 'Não encontrou o que procurava? Descreva o imóvel dos seus sonhos e nós o encontraremos para você.',
-    href: '/solicite-seu-imovel', // Crie esta página se ainda não existir
+    href: '/solicite-seu-imovel',
   },
   {
     icon: Landmark,
     title: 'Financie seu Imóvel',
     description: 'Oferecemos assessoria completa para você conseguir o melhor financiamento imobiliário.',
-    href: '/financie-seu-imovel', // Crie esta página se ainda não existir
+    href: '/financie-seu-imovel',
   },
   {
     icon: Upload,
     title: 'Cadastre seu Imóvel',
     description: 'É proprietário? Anuncie seu imóvel conosco e alcance milhares de compradores em potencial.',
-    href: '/cadastre-seu-imovel', // Crie esta página se ainda não existir
+    href: '/cadastre-seu-imovel',
   },
 ]
 

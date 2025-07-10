@@ -149,7 +149,7 @@ export default function FinancieImovelPage() {
                   </div>
                 </div>
 
-                <Button onClick={calculateFinancing} className="w-full btn-primary">
+                <Button onClick={calculateFinancing} className="w-full">
                   <Calculator className="w-4 h-4 mr-2" />
                   Calcular Financiamento
                 </Button>
@@ -279,7 +279,7 @@ export default function FinancieImovelPage() {
                 <p className="text-gray-600 mb-4">
                   Nossa equipe está pronta para ajudar você a conseguir o melhor financiamento
                 </p>
-                <Button className="btn-primary">Falar com Especialista</Button>
+                <Button className="w-full">Falar com Especialista</Button>
               </CardContent>
             </Card>
           </div>
