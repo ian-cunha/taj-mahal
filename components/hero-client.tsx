@@ -95,7 +95,7 @@ export function HeroClient({ companyName, videoUrl, imageUrl }: HeroClientProps)
   const backgroundStyle = !videoUrl && imageUrl ? { backgroundImage: `url(${imageUrl})` } : {};
 
   return (
-    <section className="relative h-[70vh] min-h-[500px] flex items-center justify-center text-center bg-gray-800 bg-cover bg-center" style={backgroundStyle}>
+    <section className="relative h-[70vh] min-h-[600px] flex items-center justify-center text-center bg-gray-800 bg-cover bg-center" style={backgroundStyle}>
       {videoUrl && (
         <video
           className="absolute top-0 left-0 w-full h-full object-cover z-0"
