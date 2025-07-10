@@ -80,9 +80,8 @@ export async function FeaturedProperties() {
                   <Badge variant="secondary">{obterTipoImovelNome(imovel.idTipoImovel)}</Badge>
                 </div>
                 <div className="absolute top-4 right-4">
-                  <Badge variant={imovel.tipoOperacao === "V" ? "default" : "destructive"}>
-                    {imovel.tipoOperacao === "V" ? "Venda" : "Locação"}
-                  </Badge>
+                  {imovel.paraVenda && <Badge variant="default">{imovel.paraLocacao ? "Venda / Locação" : "Venda"}</Badge>}
+                  {!imovel.paraVenda && imovel.paraLocacao && <Badge variant="destructive">Locação</Badge>}
                 </div>
                 <Button variant="ghost" size="icon" className="absolute bottom-4 right-4 bg-white/80 hover:bg-white">
                   <Heart className="w-4 h-4" />

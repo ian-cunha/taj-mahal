@@ -2,7 +2,7 @@ import { notFound } from "next/navigation"
 import { Suspense } from "react"
 import { ImovelDetails } from "@/components/imovel-details"
 import { LoadingSpinner } from "@/components/loading-spinner"
-import { obterImovel } from "@/lib/api"
+import { obterImovel, obterEmpresa } from "@/lib/api"
 
 interface ImovelPageProps {
   params: {
@@ -11,10 +11,14 @@ interface ImovelPageProps {
 }
 
 export async function generateMetadata({ params }: ImovelPageProps) {
+  let empresa: any = null;
+
   try {
     const imovel = await obterImovel(params.codigo)
+    empresa = await obterEmpresa()
+    const companyName = empresa?.empresanomefantasia ?? "Taj Mahal";
     return {
-      title: `${imovel.nomeImovel} - Taj Mahal`,
+      title: `${imovel.nomeImovel} - ${companyName}`,
       description: imovel.descricao || `${imovel.nomeImovel} em ${imovel.nomeBairro}, ${imovel.nomeCidade}`,
     }
   } catch {

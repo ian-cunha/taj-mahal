@@ -2,8 +2,8 @@ import { obterConfiguracaoSite, obterEmpresa } from "@/lib/api"
 import { HeroClient } from "./hero-client"
 
 export async function Hero() {
-    let config = null;
-    let empresa = null;
+    let config: any = null;
+    let empresa: any = null;
 
     try {
         // Busca a configuração do site e os dados da empresa em paralelo

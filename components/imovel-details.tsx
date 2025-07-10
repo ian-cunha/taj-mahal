@@ -64,9 +64,8 @@ export function ImovelDetails({ imovel }: ImovelDetailsProps) {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <Badge variant="secondary">{obterTipoImovelNome(imovel.idTipoImovel)}</Badge>
-            <Badge variant={imovel.tipoOperacao === "V" ? "default" : "destructive"}>
-              {imovel.tipoOperacao === "V" ? "Venda" : "Locação"}
-            </Badge>
+            {imovel.paraVenda && <Badge variant="default">{imovel.paraLocacao ? "Venda / Locação" : "Venda"}</Badge>}
+            {!imovel.paraVenda && imovel.paraLocacao && <Badge variant="destructive">Locação</Badge>}
             {imovel.destaque === "1" && <Badge variant="outline">Destaque</Badge>}
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">{imovel.nomeImovel}</h1>

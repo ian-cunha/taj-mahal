@@ -53,6 +53,8 @@ export interface Imovel {
   tipoImovel: string
   idTipoImovel: string
   tipoOperacao: "V" | "L"
+  paraVenda: boolean
+  paraLocacao: boolean
   descricaoTipoOperacao: string
   codEdificio?: string
   idEmpreendimento?: number
