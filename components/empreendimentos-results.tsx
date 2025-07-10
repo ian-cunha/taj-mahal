@@ -20,9 +20,9 @@ export async function EmpreendimentosResults() {
     return (
       <div className="text-center py-12">
         <p className="text-gray-600 mb-4">Sem empreendimentos disponíveis.</p>
-        <a href="/" className="inline-flex">
-          <Button variant="outline">Voltar ao Início</Button>
-        </a>
+        <Link href="/">
+          <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors duration-300">Voltar ao Início</Button>
+        </Link>
       </div>
     )
   }
