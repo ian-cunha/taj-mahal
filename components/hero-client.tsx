@@ -137,7 +137,7 @@ export function HeroClient({ companyName, videoUrl, imageUrl }: HeroClientProps)
                 <SelectTrigger><SelectValue placeholder={loading.initial ? "Carregando..." : "Estado"} /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os estados</SelectItem>
-                  {options.estados.map(e => <SelectItem key={e.codigo} value={String(e.codigo)}>{e.nome} ({e.contagem})</SelectItem>)}
+                  {options.estados.map(e => <SelectItem key={e.codigo} value={String(e.codigo)}>{e.nome}</SelectItem>)}
                 </SelectContent>
               </Select>
               <Select value={searchData.idCidade} onValueChange={(v) => setSearchData(f => ({ ...f, idCidade: v }))} disabled={loading.cidades || searchData.idEstado === 'all'}>

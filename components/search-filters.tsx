@@ -87,7 +87,7 @@ export function SearchFilters() {
             <SelectTrigger><SelectValue placeholder={isLoadingInitial ? "Carregando..." : "Estado"} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos os Estados</SelectItem>
-              {estados.map((e: any) => <SelectItem key={e.codigo} value={String(e.codigo)}>{e.nome} ({e.contagem})</SelectItem>)}
+              {estados.map((e: any) => <SelectItem key={e.codigo} value={String(e.codigo)}>{e.nome}</SelectItem>)}
             </SelectContent>
           </Select>
 
