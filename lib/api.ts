@@ -13,7 +13,7 @@ import type {
 
 // URLs diferentes para diferentes endpoints
 const API_BASE_URL_HTTPS = "https://app.reaisystems.com.br/sites/v1"
-const API_TOKEN = "dI2dlTNC9WP50KZU7T6jI1SMxZFTDQgFhwjoRe5g"
+const API_TOKEN = "A8iEXIyLroIA11RcOfFvVeZe5kAKFgX5EiGZKa7f"
 //YMurVHvbtAxPRZRLejSwpCHlN8nkmk2fLOx9rBRO
 
 class ApiError extends Error {
