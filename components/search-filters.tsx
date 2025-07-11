@@ -78,7 +78,7 @@ export function SearchFilters() {
             <SelectTrigger><SelectValue placeholder={isLoadingInitial ? "Carregando..." : "Tipo de Imóvel"} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos os Tipos</SelectItem>
-              {tipos.map((t: any) => <SelectItem key={t.id} value={String(t.id)}>{t.nome} ({t.contagem})</SelectItem>)}
+              {tipos.map((t: any) => <SelectItem key={t.id} value={String(t.id)}>{t.nome}</SelectItem>)}
             </SelectContent>
           </Select>
 
@@ -96,7 +96,7 @@ export function SearchFilters() {
             <SelectTrigger><SelectValue placeholder={isLoadingCidades ? "Carregando..." : "Cidade"} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas as Cidades</SelectItem>
-              {cidades.map((c: any) => <SelectItem key={c.codigo} value={String(c.codigo)}>{c.cidade} ({c.contagem})</SelectItem>)}
+              {cidades.map((c: any) => <SelectItem key={c.codigo} value={String(c.codigo)}>{c.cidade}</SelectItem>)}
             </SelectContent>
           </Select>
 
@@ -105,7 +105,7 @@ export function SearchFilters() {
             <SelectTrigger><SelectValue placeholder={isLoadingBairros ? "Carregando..." : "Bairro"} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos os Bairros</SelectItem>
-              {bairros.map((b: any) => <SelectItem key={b.codigo} value={String(b.codigo)}>{b.bairro} ({b.contagem})</SelectItem>)}
+              {bairros.map((b: any) => <SelectItem key={b.codigo} value={String(b.codigo)}>{b.bairro}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>

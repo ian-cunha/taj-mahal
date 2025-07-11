@@ -130,7 +130,7 @@ export function HeroClient({ companyName, videoUrl, imageUrl }: HeroClientProps)
                 <SelectTrigger><SelectValue placeholder={loading.initial ? "Carregando..." : "Tipo de Imóvel"} /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os tipos</SelectItem>
-                  {options.tipos.map(t => <SelectItem key={t.id} value={String(t.id)}>{t.nome} ({t.contagem})</SelectItem>)}
+                  {options.tipos.map(t => <SelectItem key={t.id} value={String(t.id)}>{t.nome}</SelectItem>)}
                 </SelectContent>
               </Select>
               <Select value={searchData.idEstado} onValueChange={(v) => setSearchData(f => ({ ...f, idEstado: v, idCidade: 'all' }))} disabled={loading.initial}>
@@ -144,7 +144,7 @@ export function HeroClient({ companyName, videoUrl, imageUrl }: HeroClientProps)
                 <SelectTrigger><SelectValue placeholder={loading.cidades ? "Carregando..." : "Cidade"} /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todas as cidades</SelectItem>
-                  {options.cidades.map(c => <SelectItem key={c.codigo} value={String(c.codigo)}>{c.cidade} ({c.contagem})</SelectItem>)}
+                  {options.cidades.map(c => <SelectItem key={c.codigo} value={String(c.codigo)}>{c.cidade}</SelectItem>)}
                 </SelectContent>
               </Select>
               <Button onClick={handleSearch} disabled={Object.values(loading).some(Boolean)}>
