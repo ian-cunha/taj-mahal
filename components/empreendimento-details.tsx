@@ -5,11 +5,9 @@ import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 import {
     MapPin,
     Bed,
-    Bath,
     Square,
     Car,
     Share2,
@@ -20,7 +18,6 @@ import {
     Building,
     Printer,
     Calendar,
-    CheckCircle,
     Package,
 } from "lucide-react"
 import type { Empreendimento } from "@/types/api"
@@ -62,7 +59,8 @@ export function EmpreendimentoDetails({ empreendimento }: EmpreendimentoDetailsP
     ].filter(Boolean)
 
     const fullAddress = addressParts.join(', ')
-    const mapSrc = `http://googleusercontent.com/maps.google.com/3{encodeURIComponent(fullAddress)}&output=embed`;
+    // URL do mapa corrigida para usar uma estrutura de query funcional
+    const mapSrc = `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
 
     return (
         <div className="space-y-8">
