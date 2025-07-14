@@ -104,7 +104,7 @@ export function ImovelDetails({ imovel, empresa }: ImovelDetailsProps) {
   const encodedWhatsAppMessage = encodeURIComponent(whatsAppMessage);
 
   const whatsAppUrl = empresa?.whatsapp
-    ? `https://wa.me/${empresa.whatsapp.replace(/\D/g, '')}?text=${encodedWhatsAppMessage}`
+    ? `https://wa.me/55${empresa.whatsapp.replace(/\D/g, '')}?text=${encodedWhatsAppMessage}`
     : '';
 
   return (
