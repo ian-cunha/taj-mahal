@@ -36,21 +36,20 @@ export function HeroClient({ companyName, videoUrl, imageUrl }: HeroClientProps)
 
   const [searchData, setSearchData] = useState({
     tipoOperacao: "V",
-    tipoImovel: "all",
     idEstado: "all",
     idCidade: "all",
+    tipoImovel: "all",
   })
 
-  // Hook para buscar os dados iniciais dos filtros de uma só vez
   useEffect(() => {
-    const fetchInitialData = async () => { // CORREÇÃO: Adicionado 'async'
+    const fetchInitialData = async () => {
       setLoading(l => ({ ...l, initial: true }));
       try {
-        const res = await fetch('/api/initial-filters');
+        const res = await fetch(`/api/initial-filters?statusImovelStr=${searchData.tipoOperacao}`);
         if (res.ok) {
           const data = await res.json();
           setDisponibilidade(data.disponibilidade);
-          setOptions(o => ({ ...o, tipos: data.tipos, estados: data.estados }));
+          setOptions(o => ({ ...o, tipos: data.tipos, estados: data.estados, cidades: [] }));
         }
       } catch (e) {
         console.error("Erro ao buscar filtros iniciais:", e);
@@ -59,12 +58,11 @@ export function HeroClient({ companyName, videoUrl, imageUrl }: HeroClientProps)
       }
     };
     fetchInitialData();
-  }, []);
+  }, [searchData.tipoOperacao]);
 
-  // Hook para buscar cidades quando o estado muda
   useEffect(() => {
     if (searchData.idEstado !== 'all') {
-      const fetchCidades = async () => { // CORREÇÃO: Adicionado 'async'
+      const fetchCidades = async () => {
         setLoading(l => ({ ...l, cidades: true }));
         try {
           const params = new URLSearchParams({ tipoImovel: searchData.tipoImovel, statusImovelStr: searchData.tipoOperacao });

@@ -5,6 +5,7 @@ import {
     obterTotalImoveis
 } from "@/lib/api";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import type { Imovel, Estado } from "@/types/api";
 
 export const revalidate = 3600; // Cache por 1 hora
@@ -58,9 +59,16 @@ async function getDisponibilidade() {
 }
 
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     try {
+        const { searchParams } = new URL(request.url);
+        const statusImovelStr = searchParams.get('statusImovelStr');
+
         const filtro = criarFiltroImovel({ quantidadeImoveis: 9999, paginado: false });
+
+        if (statusImovelStr) {
+            filtro.statusImovelStr = statusImovelStr;
+        }
 
         const [tipos, estados, disponibilidade] = await Promise.all([
             getTiposComContagem(filtro),

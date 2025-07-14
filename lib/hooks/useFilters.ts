@@ -4,9 +4,9 @@ import useSWR from 'swr';
 const fetcher = (url: string) => fetch(url).then(res => res.json());
 
 // Nosso hook centralizado para gerenciar os dados dos filtros
-export function useFilters(initialData?: any) {
+export function useFilters(tipoOperacao: string, initialData?: any) {
     // Busca os dados iniciais (tipos, estados, disponibilidade)
-    const { data: initialFilters, error: initialError } = useSWR('/api/initial-filters', fetcher, {
+    const { data: initialFilters, error: initialError } = useSWR(`/api/initial-filters?statusImovelStr=${tipoOperacao}`, fetcher, {
         fallbackData: initialData // Usa dados iniciais se disponíveis (para componentes de servidor)
     });
 

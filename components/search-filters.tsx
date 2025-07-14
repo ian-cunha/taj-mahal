@@ -21,16 +21,16 @@ export function SearchFilters() {
     idBairros: searchParams.get("idBairros") || "all",
   })
 
-  // Usando nossos hooks centralizados para buscar dados
-  const { tipos, estados, disponibilidade, isLoadingInitial } = useFilters();
+  // Usando nossos hooks centralizados para buscar dados, passando o tipo de operação
+  const { tipos, estados, disponibilidade, isLoadingInitial } = useFilters(filters.statusImovelStr);
   const { cidades, isLoadingCidades } = useCities(filters.idEstado, filters.tipoImovel, filters.statusImovelStr);
   const { bairros, isLoadingBairros } = useBairros(filters.idCidade, filters.tipoImovel);
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters(prev => {
       const updated = { ...prev, [key]: value };
-      // Reseta os filtros dependentes
-      if (key === 'idEstado') {
+      // Reseta os filtros dependentes ao mudar a operação ou o estado
+      if (key === 'statusImovelStr' || key === 'idEstado') {
         updated.idCidade = 'all';
         updated.idBairros = 'all';
       }
@@ -63,7 +63,7 @@ export function SearchFilters() {
         <CardTitle className="flex items-center gap-2"><Filter size={20} /> Filtros Personalizados</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 pt-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {/* Tipo de Operação */}
           <Select value={filters.statusImovelStr} onValueChange={(v) => handleFilterChange('statusImovelStr', v)}>
             <SelectTrigger><SelectValue /></SelectTrigger>
