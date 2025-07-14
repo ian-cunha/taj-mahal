@@ -7,6 +7,14 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from "@/components/ui/dialog"
+import {
   MapPin,
   Bed,
   Bath,
@@ -19,15 +27,19 @@ import {
   ChevronRight,
   Building,
   Printer,
+  Twitter,
+  Facebook,
+  MessageCircle, // Usado para o WhatsApp
 } from "lucide-react"
 import { formatarPreco, obterTipoImovelNome, obterCaracteristicas } from "@/lib/api"
-import type { Imovel } from "@/types/api"
+import type { Imovel, Empresa } from "@/types/api"
 
 interface ImovelDetailsProps {
-  imovel: Imovel
+  imovel: Imovel;
+  empresa: Empresa;
 }
 
-export function ImovelDetails({ imovel }: ImovelDetailsProps) {
+export function ImovelDetails({ imovel, empresa }: ImovelDetailsProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   const fotos = imovel.fotoImovelList?.filter((foto) => foto.url) || []
@@ -40,9 +52,43 @@ export function ImovelDetails({ imovel }: ImovelDetailsProps) {
     setCurrentImageIndex((prev) => (prev - 1 + fotos.length) % fotos.length)
   }
 
+  const handlePrint = () => {
+    if (imovel.urlImpressao) {
+      const windowFeatures = 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,copyhistory=no,width=800,height=750,top=40,left=100';
+      window.open(imovel.urlImpressao, '_blank', windowFeatures);
+    } else {
+      console.warn("URL de impressão não encontrada para o imóvel:", imovel.codigoImovel);
+      alert("A funcionalidade de impressão não está disponível para este imóvel.");
+    }
+  };
+
+  const handleShare = (platform: 'facebook' | 'twitter' | 'whatsapp') => {
+    const pageUrl = window.location.href;
+    const shareText = `Confira este imóvel incrível: ${imovel.nomeImovel}`;
+    const encodedUrl = encodeURIComponent(pageUrl);
+    const encodedText = encodeURIComponent(shareText);
+    let shareUrl = '';
+
+    switch (platform) {
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+        break;
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`;
+        break;
+      case 'whatsapp':
+        shareUrl = `https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}`;
+        break;
+    }
+
+    if (shareUrl) {
+      window.open(shareUrl, '_blank', 'width=600,height=400,noopener,noreferrer');
+    }
+  };
+
+
   const caracteristicas = obterCaracteristicas(imovel)
 
-  // Monta o endereço completo do imóvel para ser usado no mapa
   const addressParts = [
     imovel.endereco,
     imovel.numero,
@@ -52,9 +98,14 @@ export function ImovelDetails({ imovel }: ImovelDetailsProps) {
   ].filter(Boolean)
 
   const fullAddress = addressParts.join(', ')
+  const mapSrc = `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&output=embed`
 
-  // Usa a URL do Google Maps Embed API com uma chave de API
-  const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(fullAddress)}&output=embed`
+  const whatsAppMessage = `Olá! Vi no site o imóvel "${imovel.nomeImovel}" (Cód: ${imovel.codigoImovel}) e gostaria de mais informações.`;
+  const encodedWhatsAppMessage = encodeURIComponent(whatsAppMessage);
+
+  const whatsAppUrl = empresa?.whatsapp
+    ? `https://wa.me/${empresa.whatsapp.replace(/\D/g, '')}?text=${encodedWhatsAppMessage}`
+    : '';
 
   return (
     <div className="space-y-8">
@@ -78,8 +129,34 @@ export function ImovelDetails({ imovel }: ImovelDetailsProps) {
           )}
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm"><Printer className="w-4 h-4 mr-2" />Imprimir</Button>
-          <Button variant="outline" size="sm"><Share2 className="w-4 h-4 mr-2" />Compartilhar</Button>
+          <Button variant="outline" size="sm" onClick={handlePrint}><Printer className="w-4 h-4 mr-2" />Imprimir</Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm"><Share2 className="w-4 h-4 mr-2" />Compartilhar</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Compartilhe este imóvel</DialogTitle>
+                <DialogDescription>
+                  Escolha uma das redes sociais para compartilhar o link.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex justify-center gap-4 py-4">
+                <Button variant="outline" size="icon" className="h-14 w-14 border-2" onClick={() => handleShare('whatsapp')}>
+                  <MessageCircle className="h-7 w-7 text-green-500" />
+                  <span className="sr-only">WhatsApp</span>
+                </Button>
+                <Button variant="outline" size="icon" className="h-14 w-14 border-2" onClick={() => handleShare('facebook')}>
+                  <Facebook className="h-7 w-7 text-blue-800" />
+                  <span className="sr-only">Facebook</span>
+                </Button>
+                <Button variant="outline" size="icon" className="h-14 w-14 border-2" onClick={() => handleShare('twitter')}>
+                  <Twitter className="h-7 w-7 text-black" />
+                  <span className="sr-only">X (Twitter)</span>
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
@@ -140,8 +217,29 @@ export function ImovelDetails({ imovel }: ImovelDetailsProps) {
               <CardDescription>{imovel.empresaNomeFantasia}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button className="w-full"><Phone className="w-4 h-4 mr-2" />Ligar Agora</Button>
-              <Button variant="outline" className="w-full bg-transparent"><Mail className="w-4 h-4 mr-2" />Enviar E-mail</Button>
+              {empresa?.whatsapp ? (
+                <Button asChild className="w-full bg-green-600 hover:bg-green-700">
+                  <a href={whatsAppUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'white', textDecoration: 'none' }}>
+                    <Phone className="w-4 h-4 mr-2" />
+                    Falar no WhatsApp
+                  </a>
+                </Button>
+              ) : empresa?.tel1 && (
+                <Button asChild className="w-full">
+                  <a href={`tel:${empresa.tel1.replace(/\D/g, '')}`} style={{ color: 'white', textDecoration: 'none' }}>
+                    <Phone className="w-4 h-4 mr-2" />
+                    Ligar Agora
+                  </a>
+                </Button>
+              )}
+              {empresa?.email && (
+                <Button asChild variant="outline" className="w-full bg-transparent" style={{ color: 'black', textDecoration: 'none' }}>
+                  <a href={`mailto:${empresa.email}`}>
+                    <Mail className="w-4 h-4 mr-2" />
+                    Enviar E-mail
+                  </a>
+                </Button>
+              )}
             </CardContent>
           </Card>
           {caracteristicas.length > 0 && (

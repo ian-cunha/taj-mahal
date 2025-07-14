@@ -31,13 +31,17 @@ export async function generateMetadata({ params }: ImovelPageProps) {
 
 export default async function ImovelPage({ params }: ImovelPageProps) {
   try {
-    const imovel = await obterImovel(params.codigo)
+    // Busca os dados do imóvel e da empresa em paralelo para mais performance
+    const [imovel, empresa] = await Promise.all([
+      obterImovel(params.codigo),
+      obterEmpresa()
+    ]);
 
     return (
       <div className="py-8">
         <div className="container">
           <Suspense fallback={<LoadingSpinner />}>
-            <ImovelDetails imovel={imovel} />
+            <ImovelDetails imovel={imovel} empresa={empresa} />
           </Suspense>
         </div>
       </div>
