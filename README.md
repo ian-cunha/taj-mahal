@@ -1,4 +1,4 @@
-# 🕌 Taj Mahal - Modelo de Site para Imobiliárias
+# 🕌 Taj Mahal - Modelo de Site do RE.AI.s
 
 Este é um modelo moderno e responsivo para **portais imobiliários**, desenvolvido com **Next.js** e **TypeScript**. O projeto se integra à **API da RE.AI.s** e oferece funcionalidades completas de **listagem, busca e detalhamento de imóveis e empreendimentos**.
 
