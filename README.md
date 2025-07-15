@@ -24,7 +24,7 @@ Este é um modelo moderno e responsivo para **portais imobiliários**, desenvolv
   Área exclusiva para lançamentos da imobiliária.
 
 - **📄 Páginas Institucionais**
-  - Financie seu Imóvel (com **calculadora interativa**)
+  - Financie seu Imóvel (com formulário para simulação)
   - Trabalhe Conosco (com formulário para currículos)
   - Contato (formulário + dados da empresa)
 
