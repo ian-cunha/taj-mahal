@@ -12,8 +12,8 @@ export default async function TrabalheConoscoPage() {
   if (!token) {
     return (
       <div className="container py-12 text-center">
-        <h1 className="text-2xl font-bold text-red-600 mb-4">Erro de Configuração</h1>
-        <p className="text-gray-600">A imobiliária não foi identificada. O token de acesso não foi fornecido.</p>
+        <h1 className="text-5xl font-bold mb-4">Oops!</h1>
+        <p className="text-gray-600">O token de acesso não foi fornecido.</p>
       </div>
     );
   }
