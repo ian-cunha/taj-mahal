@@ -14,13 +14,21 @@ const TODOS_OS_TIPOS = [
 ];
 
 export async function GET(request: NextRequest) {
+    const token = request.headers.get("X-API-TOKEN");
+
+    if (!token) {
+        return new NextResponse(
+            JSON.stringify({ message: "Token de API não fornecido." }),
+            { status: 401, headers: { 'Content-Type': 'application/json' } }
+        );
+    }
+
     try {
         const { searchParams } = new URL(request.url);
 
-        // Cria o filtro base
-        const filtro = criarFiltroImovel({ quantidadeImoveis: 9999, paginado: false });
+        // Cria o filtro base com o token
+        const filtro = criarFiltroImovel(token, { quantidadeImoveis: 9999, paginado: false });
 
-        // Adiciona filtros de localização e operação se eles existirem na URL
         const idEstado = searchParams.get('idEstado');
         const idCidade = searchParams.get('idCidade');
         const statusImovelStr = searchParams.get('statusImovelStr');

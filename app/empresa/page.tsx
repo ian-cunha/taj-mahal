@@ -7,6 +7,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { obterEmpresa } from "@/lib/api";
+import { headers } from "next/headers";
 
 // Componente para um ícone e texto de contato
 const ContactInfo = ({ icon: Icon, label, value, href }: { icon: React.ElementType, label: string, value?: string | null, href?: string | null }) => {
@@ -42,9 +43,21 @@ const SocialLink = ({ icon: Icon, name, href }: { icon: React.ElementType, name:
 };
 
 export default async function EmpresaPage() {
+  const headerList = await headers();
+  const token = headerList.get("X-API-TOKEN");
+
+  if (!token) {
+    return (
+      <div className="container py-12 text-center">
+        <h1 className="text-5xl font-bold mb-4">Oops!</h1>
+        <p className="text-gray-600">O token de acesso não foi fornecido.</p>
+      </div>
+    );
+  }
+
   let empresa;
   try {
-    empresa = await obterEmpresa();
+    empresa = await obterEmpresa(token);
   } catch (error) {
     console.error("Erro ao carregar dados da empresa:", error);
     return (

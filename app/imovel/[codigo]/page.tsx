@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { notFound } from "next/navigation"
 import { Suspense } from "react"
 import { ImovelDetails } from "@/components/imovel-details"
@@ -11,11 +12,16 @@ interface ImovelPageProps {
 }
 
 export async function generateMetadata({ params }: ImovelPageProps) {
-  let empresa: any = null;
+  const headerList = await headers();
+  const token = headerList.get("X-API-TOKEN");
+
+  if (!token) {
+    return { title: "Imóvel não encontrado" };
+  }
 
   try {
-    const imovel = await obterImovel(params.codigo)
-    empresa = await obterEmpresa()
+    const imovel = await obterImovel(params.codigo, token);
+    const empresa = await obterEmpresa(token);
     const companyName = empresa?.empresanomefantasia ?? "Taj Mahal";
     return {
       title: `${imovel.nomeImovel} - ${companyName}`,
@@ -30,11 +36,17 @@ export async function generateMetadata({ params }: ImovelPageProps) {
 }
 
 export default async function ImovelPage({ params }: ImovelPageProps) {
+  const headerList = await headers();
+  const token = headerList.get("X-API-TOKEN");
+
+  if (!token) {
+    notFound();
+  }
+
   try {
-    // Busca os dados do imóvel e da empresa em paralelo para mais performance
     const [imovel, empresa] = await Promise.all([
-      obterImovel(params.codigo),
-      obterEmpresa()
+      obterImovel(params.codigo, token),
+      obterEmpresa(token)
     ]);
 
     return (

@@ -4,12 +4,20 @@ import type { NextRequest } from "next/server";
 import type { Imovel } from "@/types/api";
 
 export async function GET(request: NextRequest) {
+    const token = request.headers.get("X-API-TOKEN");
+
+    if (!token) {
+        return new NextResponse(
+            JSON.stringify({ message: "Token de API não fornecido." }),
+            { status: 401, headers: { 'Content-Type': 'application/json' } }
+        );
+    }
+
     try {
         const { searchParams } = new URL(request.url);
 
-        const filtro: any = criarFiltroImovel({ quantidadeImoveis: 9999, paginado: false });
+        const filtro: any = criarFiltroImovel(token, { quantidadeImoveis: 9999, paginado: false });
 
-        // Adiciona filtros existentes para refinar a busca
         if (searchParams.get('tipoImovel') && searchParams.get('tipoImovel') !== 'all') filtro.tipoImovel = searchParams.get('tipoImovel');
         if (searchParams.get('idEstado') && searchParams.get('idEstado') !== 'all') filtro.idEstado = Number(searchParams.get('idEstado'));
         if (searchParams.get('idCidade') && searchParams.get('idCidade') !== 'all') filtro.idCidade = Number(searchParams.get('idCidade'));
@@ -17,27 +25,22 @@ export async function GET(request: NextRequest) {
 
         const imoveis = await listarImoveis(filtro);
 
-        // Extrai opções dinâmicas dos imóveis encontrados
         const quartosOpcoes = new Set<string>();
         let precoMin = Infinity;
         let precoMax = 0;
 
         imoveis.forEach((imovel: Imovel) => {
-            // Adiciona o número de quartos às opções, se for um valor válido
             if (imovel.nquartos && Number(imovel.nquartos) > 0) {
                 quartosOpcoes.add(imovel.nquartos);
             }
-            // Atualiza a faixa de preço
             if (imovel.preco > 0) {
                 if (imovel.preco < precoMin) precoMin = imovel.preco;
                 if (imovel.preco > precoMax) precoMax = imovel.preco;
             }
         });
 
-        // Se não encontrou preço, define como 0
         if (precoMin === Infinity) precoMin = 0;
 
-        // Converte o Set de quartos para um array ordenado de números
         const availableBedrooms = Array.from(quartosOpcoes).map(Number).sort((a, b) => a - b);
 
         return NextResponse.json({

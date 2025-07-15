@@ -1,3 +1,4 @@
+import { headers } from "next/headers"; // Importar
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -8,25 +9,30 @@ import { listarImoveis, formatarPreco, obterTipoImovelNome, criarFiltroImovel } 
 import type { Imovel } from "@/types/api"
 
 export async function FeaturedProperties() {
+  const headerList = await headers();
+  const token = headerList.get("X-API-TOKEN");
+
   let imoveis: Imovel[] = []
 
-  try {
-    const filtro = criarFiltroImovel({
-      quantidadeImoveis: 6,
-      destaqueNoSite: true,
-    })
+  if (token) {
+    try {
+      const filtro = criarFiltroImovel(token, {
+        quantidadeImoveis: 6,
+        destaqueNoSite: true,
+      })
 
-    const imoveisDestaque = await listarImoveis(filtro)
+      const imoveisDestaque = await listarImoveis(filtro)
 
-    // Otimização: Removemos o loop N+1.
-    imoveis = imoveisDestaque.map(imovel => ({
-      ...imovel,
-      paraVenda: imovel.tipoOperacao.includes('V'),
-      paraLocacao: imovel.tipoOperacao.includes('L'),
-    }));
+      imoveis = imoveisDestaque.map(imovel => ({
+        ...imovel,
+        paraVenda: imovel.tipoOperacao.includes('V'),
+        paraLocacao: imovel.tipoOperacao.includes('L'),
+      }));
 
-  } catch (error) {
-    console.error("Erro ao carregar imóveis em destaque:", error)
+    } catch (error) {
+      console.error("❌ Erro ao carregar imóveis em destaque:", error)
+      // O array 'imoveis' permanecerá vazio, e o componente renderizará a mensagem de erro abaixo.
+    }
   }
 
   const viewAllButton = (
@@ -37,6 +43,7 @@ export async function FeaturedProperties() {
     </Link>
   );
 
+  // A lógica de renderização para quando não há imóveis agora também cobre o caso de erro na API.
   if (imoveis.length === 0) {
     return (
       <section className="py-16 bg-white">
@@ -48,7 +55,7 @@ export async function FeaturedProperties() {
             </p>
           </div>
           <div className="text-center">
-            <p className="text-gray-600 mb-4">Nenhum imóvel em destaque encontrado no momento.</p>
+            <p className="text-gray-600 mb-4">Nenhum imóvel em destaque encontrado no momento ou ocorreu um erro ao buscá-los.</p>
             {viewAllButton}
           </div>
         </div>

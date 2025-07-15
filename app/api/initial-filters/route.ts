@@ -47,10 +47,10 @@ async function getEstadosComContagem(filtro: any) {
         .filter(estado => estado.contagem > 0);
 }
 
-async function getDisponibilidade() {
+async function getDisponibilidade(token: string) {
     const [totalVenda, totalLocacao] = await Promise.all([
-        obterTotalImoveis(criarFiltroImovel({ quantidadeImoveis: 1, statusImovelStr: "V", paginado: false })),
-        obterTotalImoveis(criarFiltroImovel({ quantidadeImoveis: 1, statusImovelStr: "L", paginado: false })),
+        obterTotalImoveis(criarFiltroImovel(token, { quantidadeImoveis: 1, statusImovelStr: "V", paginado: false })),
+        obterTotalImoveis(criarFiltroImovel(token, { quantidadeImoveis: 1, statusImovelStr: "L", paginado: false })),
     ]);
     return {
         temVenda: totalVenda > 0,
@@ -60,11 +60,20 @@ async function getDisponibilidade() {
 
 
 export async function GET(request: NextRequest) {
+    const token = request.headers.get("X-API-TOKEN");
+
+    if (!token) {
+        return new NextResponse(
+            JSON.stringify({ message: "Token de API não fornecido" }),
+            { status: 401, headers: { 'Content-Type': 'application/json' } }
+        );
+    }
+
     try {
         const { searchParams } = new URL(request.url);
         const statusImovelStr = searchParams.get('statusImovelStr');
 
-        const filtro = criarFiltroImovel({ quantidadeImoveis: 9999, paginado: false });
+        const filtro = criarFiltroImovel(token, { quantidadeImoveis: 9999, paginado: false });
 
         if (statusImovelStr) {
             filtro.statusImovelStr = statusImovelStr;
@@ -73,7 +82,7 @@ export async function GET(request: NextRequest) {
         const [tipos, estados, disponibilidade] = await Promise.all([
             getTiposComContagem(filtro),
             getEstadosComContagem(filtro),
-            getDisponibilidade()
+            getDisponibilidade(token)
         ]);
 
         return NextResponse.json({

@@ -3,10 +3,21 @@ import Image from "next/image";
 import { Home, Phone, Mail, MapPin, Facebook, Instagram, Youtube } from "lucide-react";
 import { obterEmpresa } from "@/lib/api";
 
-export async function Footer() {
+// O footer também recebe o token
+export async function Footer({ token }: { token: string | null }) {
+  if (!token) {
+    return (
+      <footer className="bg-gray-100">
+        <div className="container py-8 text-center text-gray-500">
+          <p>O token de acesso não foi fornecido.</p>
+        </div>
+      </footer>
+    );
+  }
+
   let empresa;
   try {
-    empresa = await obterEmpresa();
+    empresa = await obterEmpresa(token);
   } catch (error) {
     console.error("Erro ao carregar dados da empresa para o footer:", error);
     return (

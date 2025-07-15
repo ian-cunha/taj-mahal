@@ -1,8 +1,10 @@
+import { headers } from "next/headers";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, Mail, MapPin, Youtube, Facebook, Instagram } from "lucide-react";
 import Link from "next/link";
 import { obterEmpresa } from "@/lib/api";
 import { ContactForm } from "@/components/contact-form";
+import type { Empresa } from "@/types/api";
 
 // Componente reutilizável para informações de contato
 const ContactInfo = ({ icon: Icon, label, value, href }: { icon: React.ElementType, label: string, value?: string | null, href?: string | null }) => {
@@ -38,24 +40,34 @@ const SocialLink = ({ icon: Icon, name, href, colorClass }: { icon: React.Elemen
 };
 
 export default async function ContatoPage() {
-  let empresa;
+  const headerList = await headers();
+  const token = headerList.get("X-API-TOKEN");
+
+  // Função para renderizar o erro de forma padronizada
+  const renderError = (title: string, message: string) => (
+    <div className="container py-12 text-center">
+      <h1 className="text-5xl font-bold mb-4">{title}</h1>
+      <p className="text-gray-600">{message}</p>
+    </div>
+  );
+
+  if (!token) {
+    return renderError("Oops!", "O token de acesso não foi fornecido.");
+  }
+
+  let empresa: Empresa;
   try {
-    empresa = await obterEmpresa();
+    empresa = await obterEmpresa(token);
   } catch (error) {
     console.error("Erro ao carregar dados da empresa:", error);
-    return (
-      <div className="container py-12 text-center">
-        <h1 className="text-2xl font-bold text-red-600 mb-4">Erro ao Carregar a Página de Contato</h1>
-        <p className="text-gray-600">Não foi possível buscar as informações da imobiliária. Por favor, tente novamente mais tarde.</p>
-      </div>
-    );
+    return renderError("Erro ao Carregar a Página de Contato", "Não foi possível buscar as informações da imobiliária. Por favor, tente novamente mais tarde.");
   }
 
   const hasSocialMedia = empresa.facebook || empresa.instagram || empresa.youtube || empresa.whatsapp;
   const fullAddress = empresa.enderecoFormatado || empresa.endereco;
 
   // Usa a URL padrão do Google Maps para embed
-  const mapSrc = `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress ?? '')}&output=embed`;
+  const mapSrc = fullAddress ? `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&output=embed` : '';
 
   return (
     <div className="py-12 bg-gray-50">
@@ -117,7 +129,7 @@ export default async function ContatoPage() {
             </CardHeader>
             <CardContent>
               <div className="aspect-w-16 aspect-h-9 overflow-hidden rounded-lg">
-                {fullAddress ? (
+                {mapSrc ? (
                   <iframe
                     width="100%"
                     height="450"

@@ -1,3 +1,4 @@
+import { headers } from "next/headers"; // Importar
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { obterEmpresa } from "@/lib/api";
 import { JobApplicationForm } from "@/components/job-application-form";
@@ -5,9 +6,21 @@ import { Briefcase, Mail, Phone } from "lucide-react";
 import Link from "next/link";
 
 export default async function TrabalheConoscoPage() {
+  const headerList = await headers();
+  const token = headerList.get("X-API-TOKEN");
+
+  if (!token) {
+    return (
+      <div className="container py-12 text-center">
+        <h1 className="text-2xl font-bold text-red-600 mb-4">Erro de Configuração</h1>
+        <p className="text-gray-600">A imobiliária não foi identificada. O token de acesso não foi fornecido.</p>
+      </div>
+    );
+  }
+
   let empresa;
   try {
-    empresa = await obterEmpresa();
+    empresa = await obterEmpresa(token);
   } catch (error) {
     console.error("Erro ao carregar dados da empresa:", error);
     return (

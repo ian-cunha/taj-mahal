@@ -13,9 +13,6 @@ import type {
 
 // URLs diferentes para diferentes endpoints
 const API_BASE_URL_HTTPS = "https://app.reaisystems.com.br/sites/v1"
-const API_TOKEN = "oRGtX0YVwAcenYxZTZzCCqU50Zcu2vTODXGAWRSN"
-// oRGtX0YVwAcenYxZTZzCCqU50Zcu2vTODXGAWRSN Youdigital
-// YMurVHvbtAxPRZRLejSwpCHlN8nkmk2fLOx9rBRO Open
 
 class ApiError extends Error {
   constructor(
@@ -54,7 +51,13 @@ async function apiRequest<T>(url: string, retryWithHttp = true): Promise<T> {
 
     return data;
   } catch (error) {
-    console.error("❌ API Error:", { url, error: error instanceof Error ? error.message : error });
+    // MODIFICAÇÃO: Melhorando o log de erro
+    console.error("❌ API Error:", {
+      url,
+      message: error instanceof Error ? error.message : "Erro desconhecido",
+      cause: error instanceof Error ? error.cause : "Causa desconhecida",
+      stack: error instanceof Error ? error.stack : "Sem stack trace"
+    });
 
     if (retryWithHttp && url.includes("https://")) {
       const httpUrl = url.replace("https://", "http://");
@@ -62,7 +65,6 @@ async function apiRequest<T>(url: string, retryWithHttp = true): Promise<T> {
       try {
         return await apiRequest<T>(httpUrl, false);
       } catch (retryError) {
-        // Lança o erro da nova tentativa se a primeira também falhou
         throw retryError;
       }
     }
@@ -70,7 +72,8 @@ async function apiRequest<T>(url: string, retryWithHttp = true): Promise<T> {
     if (error instanceof ApiError) {
       throw error;
     }
-    throw new ApiError("Erro de conexão com a API");
+    // Lançamos um erro mais descritivo
+    throw new ApiError(`Falha na conexão com a API ao tentar acessar ${url}`, 503);
   }
 }
 
@@ -81,18 +84,18 @@ export interface DisponibilidadeOperacao {
 }
 
 // Função para verificar disponibilidade de operações
-export async function verificarDisponibilidadeOperacoes(): Promise<DisponibilidadeOperacao> {
+export async function verificarDisponibilidadeOperacoes(token: string): Promise<DisponibilidadeOperacao> {
   try {
     console.log("🔍 Verificando disponibilidade de operações...")
 
     // Verificar se tem imóveis para venda
-    const filtroVenda = criarFiltroImovel({
+    const filtroVenda = criarFiltroImovel(token, {
       quantidadeImoveis: 1,
       statusImovelStr: "V",
     })
 
     // Verificar se tem imóveis para locação
-    const filtroLocacao = criarFiltroImovel({
+    const filtroLocacao = criarFiltroImovel(token, {
       quantidadeImoveis: 1,
       statusImovelStr: "L",
     })
@@ -122,8 +125,8 @@ export async function verificarDisponibilidadeOperacoes(): Promise<Disponibilida
 }
 
 // Funções para Imóveis
-export async function obterImovel(codigoImovel: string): Promise<Imovel> {
-  const data = await apiRequest<ApiResponse<Imovel>>(`${API_BASE_URL_HTTPS}/imovel/${codigoImovel}/${API_TOKEN}`)
+export async function obterImovel(codigoImovel: string, token: string): Promise<Imovel> {
+  const data = await apiRequest<ApiResponse<Imovel>>(`${API_BASE_URL_HTTPS}/imovel/${codigoImovel}/${token}`)
   return data.imovel as Imovel
 }
 
@@ -150,26 +153,26 @@ export async function listarImoveis(filtro: FiltroImovel): Promise<Imovel[]> {
   return data.imoveis as Imovel[]
 }
 
-export async function listarImoveisPorCodigos(codigos: string[]): Promise<Imovel[]> {
+export async function listarImoveisPorCodigos(codigos: string[], token: string): Promise<Imovel[]> {
   const codigosStr = codigos.join(";")
   const data = await apiRequest<ApiResponse<Imovel[]>>(
-    `${API_BASE_URL_HTTPS}/imovel/listarImoveisLista?codigos=${codigosStr}&token=${API_TOKEN}`,
+    `${API_BASE_URL_HTTPS}/imovel/listarImoveisLista?codigos=${codigosStr}&token=${token}`,
   )
   return data.imoveis as Imovel[]
 }
 
-export async function obterImoveisSugeridos(codigo: string, limite?: number): Promise<Imovel[]> {
+export async function obterImoveisSugeridos(codigo: string, token: string, limite?: number): Promise<Imovel[]> {
   const url = limite
-    ? `${API_BASE_URL_HTTPS}/imovel/imoveisSugeridos/${codigo}/${limite}/${API_TOKEN}`
-    : `${API_BASE_URL_HTTPS}/imovel/imoveisSugeridos/${codigo}/${API_TOKEN}`
+    ? `${API_BASE_URL_HTTPS}/imovel/imoveisSugeridos/${codigo}/${limite}/${token}`
+    : `${API_BASE_URL_HTTPS}/imovel/imoveisSugeridos/${codigo}/${token}`
 
   const data = await apiRequest<ApiResponse<Imovel[]>>(url)
   return data.imoveis as Imovel[]
 }
 
 // Funções para Empreendimentos
-export async function obterEmpreendimento(id: number): Promise<Empreendimento> {
-  const data = await apiRequest<ApiResponse<Empreendimento>>(`${API_BASE_URL_HTTPS}/empreendimento/${id}/${API_TOKEN}`)
+export async function obterEmpreendimento(id: number, token: string): Promise<Empreendimento> {
+  const data = await apiRequest<ApiResponse<Empreendimento>>(`${API_BASE_URL_HTTPS}/empreendimento/${id}/${token}`)
   return data.empreendimento as Empreendimento
 }
 
@@ -189,10 +192,10 @@ export async function listarEmpreendimentos(filtro: FiltroEmpreendimento): Promi
   return data.empreendimentos as Empreendimento[]
 }
 
-export async function listarEmpreendimentosPorIds(ids: number[]): Promise<Empreendimento[]> {
+export async function listarEmpreendimentosPorIds(ids: number[], token: string): Promise<Empreendimento[]> {
   const idsStr = ids.join(";")
   const data = await apiRequest<ApiResponse<Empreendimento[]>>(
-    `${API_BASE_URL_HTTPS}/empreendimento/listarEmpreendimentosLista?listaId=${idsStr}&token=${API_TOKEN}`,
+    `${API_BASE_URL_HTTPS}/empreendimento/listarEmpreendimentosLista?listaId=${idsStr}&token=${token}`,
   )
   return data.empreendimentos as Empreendimento[]
 }
@@ -229,22 +232,22 @@ export async function obterBairro(codigo: number): Promise<Bairro> {
 }
 
 // Funções para Empresa
-export async function obterEmpresa(): Promise<Empresa> {
-  const data = await apiRequest<ApiResponse<Empresa>>(`${API_BASE_URL_HTTPS}/empresa/${API_TOKEN}`)
+export async function obterEmpresa(token: string): Promise<Empresa> {
+  const data = await apiRequest<ApiResponse<Empresa>>(`${API_BASE_URL_HTTPS}/empresa/${token}`)
   return data.empresa as Empresa
 }
 
-export async function obterConfiguracaoSite(): Promise<ConfiguracaoSite> {
+export async function obterConfiguracaoSite(token: string): Promise<ConfiguracaoSite> {
   const data = await apiRequest<ApiResponse<ConfiguracaoSite>>(
-    `${API_BASE_URL_HTTPS}/empresa/configuracaoSite/${API_TOKEN}`,
+    `${API_BASE_URL_HTTPS}/empresa/configuracaoSite/${token}`,
   )
   return data.configuracaoSite as ConfiguracaoSite
 }
 
 // Função para criar filtro padrão com token
-export function criarFiltroImovel(params: Partial<FiltroImovel> = {}): FiltroImovel {
+export function criarFiltroImovel(token: string, params: Partial<FiltroImovel> = {}): FiltroImovel {
   const filtroBase: FiltroImovel = {
-    token: API_TOKEN,
+    token: token,
     quantidadeImoveis: 12,
     statusImovelStr: "V;L",
     novos: true,
@@ -256,9 +259,9 @@ export function criarFiltroImovel(params: Partial<FiltroImovel> = {}): FiltroImo
   return { ...filtroBase, ...params }
 }
 
-export function criarFiltroEmpreendimento(params: Partial<FiltroEmpreendimento> = {}): FiltroEmpreendimento {
+export function criarFiltroEmpreendimento(token: string, params: Partial<FiltroEmpreendimento> = {}): FiltroEmpreendimento {
   return {
-    token: API_TOKEN,
+    token: token,
     quantidade: 12,
     ...params,
   }

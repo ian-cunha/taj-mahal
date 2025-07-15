@@ -6,6 +6,15 @@ import type { Bairro, Imovel } from "@/types/api";
 export const revalidate = 3600; // Cache por 1 hora
 
 export async function GET(request: NextRequest, { params }: { params: { cidade: string } }) {
+  const token = request.headers.get("X-API-TOKEN");
+
+  if (!token) {
+    return new NextResponse(
+      JSON.stringify({ message: "Token de API não fornecido." }),
+      { status: 401, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const tipoImovel = searchParams.get('tipoImovel');
@@ -15,10 +24,10 @@ export async function GET(request: NextRequest, { params }: { params: { cidade: 
       return new NextResponse(JSON.stringify({ message: "ID da cidade inválido" }), { status: 400 });
     }
 
-    const filtro = criarFiltroImovel({
+    const filtro = criarFiltroImovel(token, {
       quantidadeImoveis: 9999,
       paginado: false,
-      idCidade: codigoCidade // Filtra pela cidade
+      idCidade: codigoCidade
     });
 
     if (tipoImovel && tipoImovel !== 'all') {

@@ -1,25 +1,24 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { MapPin, Building, Calendar, Users } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
-import { listarEmpreendimentos, criarFiltroEmpreendimento } from "@/lib/api"
+import Link from "next/link";
+import Image from "next/image";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { MapPin, Building, Calendar, Users } from "lucide-react";
+import type { Empreendimento } from "@/types/api";
 
-export async function EmpreendimentosResults() {
-  let empreendimentos = []
+// A interface define que o componente espera receber um array de Empreendimentos
+interface EmpreendimentosResultsProps {
+  empreendimentos: Empreendimento[];
+}
 
-  try {
-    const filtro = criarFiltroEmpreendimento({
-      quantidade: 12,
-    })
+export function EmpreendimentosResults({ empreendimentos }: EmpreendimentosResultsProps) {
 
-    empreendimentos = await listarEmpreendimentos(filtro)
-  } catch (error) {
-    console.error("Erro ao carregar empreendimentos:", error)
+  // Se o array de empreendimentos estiver vazio, exibe uma mensagem amigável.
+  // Isso cobre tanto o caso de não haver resultados quanto o de falha na API na página pai.
+  if (empreendimentos.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-600 mb-4">Sem empreendimentos disponíveis.</p>
+        <p className="text-gray-600 mb-4">Nenhum empreendimento encontrado no momento.</p>
         <Link href="/">
           <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors duration-300">Voltar ao Início</Button>
         </Link>
@@ -27,14 +26,7 @@ export async function EmpreendimentosResults() {
     )
   }
 
-  if (empreendimentos.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-gray-600 mb-4">Nenhum empreendimento encontrado no momento.</p>
-      </div>
-    )
-  }
-
+  // Se houver empreendimentos, eles são mapeados e exibidos no grid.
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {empreendimentos.map((empreendimento) => (

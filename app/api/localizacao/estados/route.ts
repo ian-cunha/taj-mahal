@@ -6,14 +6,23 @@ import type { Estado, Imovel } from "@/types/api";
 export const revalidate = 3600; // Cache por 1 hora
 
 export async function GET(request: NextRequest) {
+  const token = request.headers.get("X-API-TOKEN");
+
+  if (!token) {
+    return new NextResponse(
+      JSON.stringify({ message: "Token de API não fornecido." }),
+      { status: 401, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const tipoImovel = searchParams.get('tipoImovel');
     const statusImovelStr = searchParams.get('statusImovelStr');
 
+    // O filtro agora precisa do token para ser criado
+    const filtro = criarFiltroImovel(token, { quantidadeImoveis: 9999, paginado: false });
 
-    // O filtro é aplicado apenas se o tipo de imóvel for especificado
-    const filtro = criarFiltroImovel({ quantidadeImoveis: 9999, paginado: false });
     if (tipoImovel && tipoImovel !== 'all') {
       filtro.tipoImovel = tipoImovel;
     }
@@ -21,6 +30,7 @@ export async function GET(request: NextRequest) {
       filtro.statusImovelStr = statusImovelStr;
     }
 
+    // A chamada para listarImoveis agora funcionará com o token correto
     const [estados, imoveis] = await Promise.all([
       obterEstados(),
       listarImoveis(filtro)
