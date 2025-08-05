@@ -98,7 +98,7 @@ export default async function BuscaPage({ searchParams }: SearchPageProps) {
         </div>
 
         {/* O SearchFilters é um Client Component que não precisa de dados do servidor */}
-        <SearchFilters />
+        <SearchFilters token={token} />
 
         {/* Usamos Suspense para mostrar um loading enquanto os resultados são carregados */}
         <Suspense fallback={<LoadingSpinner />}>

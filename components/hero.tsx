@@ -8,7 +8,7 @@ export async function Hero() {
 
     let config: any = null;
     let empresa: any = null;
-    let companyName = "RE.AI.s"; // Nome fallback
+    let companyName = "RE.AI.s";
 
     // Se não houver token, não podemos fazer as chamadas à API
     if (token) {

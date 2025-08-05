@@ -8,7 +8,7 @@ import { useFilters, useCities, useBairros } from "@/lib/hooks/useFilters"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { Filter, RotateCcw, Search } from "lucide-react"
 
-export function SearchFilters() {
+export function SearchFilters({ token }: { token: string | null }) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -22,9 +22,9 @@ export function SearchFilters() {
   })
 
   // Usando nossos hooks centralizados para buscar dados, passando o tipo de operação
-  const { tipos, estados, disponibilidade, isLoadingInitial } = useFilters(filters.statusImovelStr);
-  const { cidades, isLoadingCidades } = useCities(filters.idEstado, filters.tipoImovel, filters.statusImovelStr);
-  const { bairros, isLoadingBairros } = useBairros(filters.idCidade, filters.tipoImovel);
+  const { tipos, estados, disponibilidade, isLoadingInitial } = useFilters(filters.statusImovelStr, token);
+  const { cidades, isLoadingCidades } = useCities(filters.idEstado, filters.tipoImovel, filters.statusImovelStr, token);
+  const { bairros, isLoadingBairros } = useBairros(filters.idCidade, filters.tipoImovel, token);
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters(prev => {
