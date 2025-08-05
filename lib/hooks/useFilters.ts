@@ -10,8 +10,6 @@ const fetcher = ([url, token]: [string, string]) =>
 
 // Hook para gerenciar os dados dos filtros
 export function useFilters(tipoOperacao: string, token: string | null, initialData?: any) {
-    // A chave do SWR agora é uma tupla [url, token]
-    // A requisição só será feita se o token existir
     const { data: initialFilters, error: initialError } = useSWR(
         token ? [`/api/initial-filters?statusImovelStr=${tipoOperacao}`, token] : null,
         fetcher,
@@ -19,8 +17,7 @@ export function useFilters(tipoOperacao: string, token: string | null, initialDa
             fallbackData: initialData,
             revalidateOnFocus: false, // Opcional: desativa revalidação no foco da janela
             revalidateIfStale: true,
-            // Aqui você define o tempo de revalidação em milissegundos
-            // 3600000 ms = 1 hora
+            revalidateOnMount: false, // Evita a revalidação ao montar o componente se os dados estiverem no cache
             refreshInterval: 3600000
         }
     );
@@ -47,7 +44,6 @@ export function useFilters(tipoOperacao: string, token: string | null, initialDa
         isLoadingInitial: !initialFilters && !initialError,
         isErrorInitial: initialError,
 
-        // Funções para passar para os hooks de cidades e bairros
         fetchCities,
         fetchBairros,
     };
@@ -59,7 +55,10 @@ export function useCities(idEstado: string | number, tipoImovel: string, tipoOpe
     const { data, error } = useSWR(
         token && idEstado && idEstado !== 'all' ? [fetcherUrl, token] : null,
         fetcher,
-        { refreshInterval: 3600000 } // Cache de 1 hora
+        {
+            refreshInterval: 3600000, // Cache de 1 hora
+            revalidateOnMount: false,
+        }
     );
 
     return {
@@ -75,7 +74,10 @@ export function useBairros(idCidade: string | number, tipoImovel: string, token:
     const { data, error } = useSWR(
         token && idCidade && idCidade !== 'all' ? [fetcherUrl, token] : null,
         fetcher,
-        { refreshInterval: 3600000 } // Cache de 1 hora
+        {
+            refreshInterval: 3600000, // Cache de 1 hora
+            revalidateOnMount: false,
+        }
     );
 
     return {
